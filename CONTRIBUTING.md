@@ -103,6 +103,8 @@ The CI pipeline verifies that generated files are committed and up-to-date. Alwa
 
 Implementing a new Redfish endpoint (`pkg/redfish/api_service.go`) also falls under `make generate`: it regenerates `pkg/redfish/implemented_routes_gen.go`, the route set the agent registers. Without it the new endpoint answers 404, and the CI freshness check fails on the dirty tree.
 
+If the endpoint doesn't exist under `pkg/generated/redfish/` yet, generate its stub first: add its `METHOD /path` to `hack/redfish/spec/implemented-operations.yaml`, then run `make generate-redfish-api` (requires `openapi-generator` and `goimports`; see `hack/redfish/generate.sh`). That file is an allowlist — `hack/redfish/trim-redfish-spec` drops every operation not listed in it before `openapi-generator` runs, so an endpoint missing from the allowlist is never generated at all, regardless of whether you implement it in `api_service.go`. `go test ./hack/redfish/trim-redfish-spec/...` fails loudly if the allowlist and the vendored spec disagree.
+
 #### Formatting and Vetting
 
 ```bash
