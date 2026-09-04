@@ -47,17 +47,9 @@ type MessageMessage struct {
 	Username *string `json:"Username,omitempty"`
 }
 
-// AssertMessageMessageRequired checks if the required fields are not zero-ed
+// AssertMessageMessageRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertMessageMessageRequired(obj MessageMessage) error {
-	elements := map[string]interface{}{
-		"MessageId": obj.MessageId,
-	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
-		}
-	}
-
 	for _, el := range obj.ResolutionSteps {
 		if err := AssertResolutionStepResolutionStepRequired(el); err != nil {
 			return err

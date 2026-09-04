@@ -13,8 +13,14 @@ package server
 // SoftwareInventoryAdditionalVersions - Additional versions.
 type SoftwareInventoryAdditionalVersions struct {
 
+	// The version of the configuration file that contains the initial boot parameters of this software, such as parameters for U-Boot.
+	BootParameters *string `json:"BootParameters,omitempty"`
+
 	// The bootloader version contained in this software, such as U-Boot or UEFI.
 	Bootloader *string `json:"Bootloader,omitempty"`
+
+	// The version of the configuration that contains the factory default runtime configuration parameters of this software.
+	FactoryConfiguration *string `json:"FactoryConfiguration,omitempty"`
 
 	// The kernel version contained in this software.
 	Kernel *string `json:"Kernel,omitempty"`
@@ -29,7 +35,8 @@ type SoftwareInventoryAdditionalVersions struct {
 	Oem map[string]interface{} `json:"Oem,omitempty"`
 }
 
-// AssertSoftwareInventoryAdditionalVersionsRequired checks if the required fields are not zero-ed
+// AssertSoftwareInventoryAdditionalVersionsRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertSoftwareInventoryAdditionalVersionsRequired(obj SoftwareInventoryAdditionalVersions) error {
 	return nil
 }

@@ -8,6 +8,7 @@ package redfish
 // suffixes for alias paths of the same operation.
 var implementedMethods = map[string]bool{
 	"RedfishV1Get":         true,
+	"RedfishV1Get_0":       true,
 	"RedfishV1ManagersGet": true,
 	"RedfishV1ManagersManagerIdActionsManagerResetPost":                                      true,
 	"RedfishV1ManagersManagerIdGet":                                                          true,

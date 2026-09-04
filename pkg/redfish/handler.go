@@ -120,7 +120,7 @@ func (h *handler) GetManagerCollection() *server.ManagerCollectionManagerCollect
 		OdataContext: "/redfish/v1/$metadata#ManagerCollection.ManagerCollection",
 		OdataId:      "/redfish/v1/Managers",
 		OdataType:    "#ManagerCollection.ManagerCollection",
-		Description:  "Manager Collection",
+		Description:  util.Ptr("Manager Collection"),
 		Name:         "Manager Collection",
 		Members: []server.OdataV4IdRef{
 			{
@@ -149,7 +149,7 @@ func (h *handler) GetVirtualMediaCollection() *server.VirtualMediaCollectionVirt
 		OdataContext: "/redfish/v1/$metadata#VirtualMediaCollection.VirtualMediaCollection",
 		OdataId:      "/redfish/v1/Managers/BMC/VirtualMedia",
 		OdataType:    "#VirtualMediaCollection.VirtualMediaCollection",
-		Description:  "Virtual Media Collection",
+		Description:  util.Ptr("Virtual Media Collection"),
 		Name:         "Virtual Media Collection",
 		Members: []server.OdataV4IdRef{
 			{
@@ -189,7 +189,7 @@ func (h *handler) GetComputerSystemCollection() *server.ComputerSystemCollection
 		OdataContext: "/redfish/v1/$metadata#ComputerSystemCollection.ComputerSystemCollection",
 		OdataId:      "/redfish/v1/Systems",
 		OdataType:    "#ComputerSystemCollection.ComputerSystemCollection",
-		Description:  "Computer System Collection",
+		Description:  util.Ptr("Computer System Collection"),
 		Name:         "Computer System Collection",
 		Members: []server.OdataV4IdRef{
 			{

@@ -11,6 +11,8 @@
 package server
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -72,20 +74,172 @@ type SessionV171Session struct {
 	UserName *string `json:"UserName,omitempty"`
 }
 
-// AssertSessionV171SessionRequired checks if the required fields are not zero-ed
-func AssertSessionV171SessionRequired(obj SessionV171Session) error {
-	elements := map[string]interface{}{
-		"@odata.id":   obj.OdataId,
-		"@odata.type": obj.OdataType,
-		"Id":          obj.Id,
-		"Name":        obj.Name,
+// UnmarshalJSON validates required property keys then unmarshals into SessionV171Session
+func (o *SessionV171Session) UnmarshalJSON(data []byte) (err error) {
+	// Presence is checked against required fields that exist on this struct,
+	// including fields promoted from embedded allOf parents.
+	requiredProperties := []string{
+		"Id",
+		"Name",
 	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
+
+	requiredNullableProperties := map[string]bool{
+		"Id":   false,
+		"Name": false,
+	}
+
+	allowedJsonKeys := map[string]struct{}{
+		"@odata.context":        {},
+		"@odata.etag":           {},
+		"@odata.id":             {},
+		"@odata.type":           {},
+		"Actions":               {},
+		"ClientOriginIPAddress": {},
+		"Context":               {},
+		"CreatedTime":           {},
+		"Description":           {},
+		"Id":                    {},
+		"Links":                 {},
+		"Name":                  {},
+		"Oem":                   {},
+		"OemSessionType":        {},
+		"Password":              {},
+		"Roles":                 {},
+		"SessionType":           {},
+		"Token":                 {},
+		"UserName":              {},
+	}
+
+	allProperties := make(map[string]json.RawMessage)
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err
+	}
+
+	for _, requiredProperty := range requiredProperties {
+		value, exists := allProperties[requiredProperty]
+		if !exists {
+			return &RequiredError{Field: requiredProperty}
+		}
+		if string(value) == "null" && !requiredNullableProperties[requiredProperty] {
+			return &RequiredError{Field: requiredProperty}
 		}
 	}
 
+	for key := range allProperties {
+		if _, exists := allowedJsonKeys[key]; !exists {
+			return fmt.Errorf("json: unknown field %q", key)
+		}
+	}
+
+	var decoded SessionV171Session
+
+	if value, exists := allProperties["@odata.context"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataContext); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.etag"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataEtag); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.id"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataId); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.type"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataType); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Actions"]; exists {
+		if err = json.Unmarshal(value, &decoded.Actions); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ClientOriginIPAddress"]; exists {
+		if err = json.Unmarshal(value, &decoded.ClientOriginIPAddress); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Context"]; exists {
+		if err = json.Unmarshal(value, &decoded.Context); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["CreatedTime"]; exists {
+		if err = json.Unmarshal(value, &decoded.CreatedTime); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Description"]; exists {
+		if err = json.Unmarshal(value, &decoded.Description); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Id"]; exists {
+		if err = json.Unmarshal(value, &decoded.Id); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Links"]; exists {
+		if err = json.Unmarshal(value, &decoded.Links); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Name"]; exists {
+		if err = json.Unmarshal(value, &decoded.Name); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Oem"]; exists {
+		if err = json.Unmarshal(value, &decoded.Oem); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["OemSessionType"]; exists {
+		if err = json.Unmarshal(value, &decoded.OemSessionType); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Password"]; exists {
+		if err = json.Unmarshal(value, &decoded.Password); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Roles"]; exists {
+		if err = json.Unmarshal(value, &decoded.Roles); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SessionType"]; exists {
+		if err = json.Unmarshal(value, &decoded.SessionType); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Token"]; exists {
+		if err = json.Unmarshal(value, &decoded.Token); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["UserName"]; exists {
+		if err = json.Unmarshal(value, &decoded.UserName); err != nil {
+			return err
+		}
+	}
+
+	*o = decoded
+
+	return nil
+}
+
+// AssertSessionV171SessionRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
+func AssertSessionV171SessionRequired(obj SessionV171Session) error {
 	if err := AssertSessionV171ActionsRequired(obj.Actions); err != nil {
 		return err
 	}

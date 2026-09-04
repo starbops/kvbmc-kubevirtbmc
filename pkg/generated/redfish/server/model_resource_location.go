@@ -36,36 +36,37 @@ type ResourceLocation struct {
 	// The OEM extension.
 	Oem map[string]interface{} `json:"Oem,omitempty"`
 
-	PartLocation ResourceV1200PartLocation `json:"PartLocation,omitempty"`
+	PartLocation ResourceV1240PartLocation `json:"PartLocation,omitempty"`
 
 	// Human-readable string to enable differentiation between `PartLocation` values for parts in the same enclosure, which might include hierarchical information of containing `PartLocation` values for the part.
 	PartLocationContext *string `json:"PartLocationContext,omitempty"`
 
-	PhysicalAddress ResourceV1200PhysicalAddress `json:"PhysicalAddress,omitempty"`
+	PhysicalAddress ResourceV1240PhysicalAddress `json:"PhysicalAddress,omitempty"`
 
-	Placement ResourceV1200Placement `json:"Placement,omitempty"`
+	Placement ResourceV1240Placement `json:"Placement,omitempty"`
 
 	// Deprecated
-	PostalAddress ResourceV1200PostalAddress `json:"PostalAddress,omitempty"`
+	PostalAddress ResourceV1240PostalAddress `json:"PostalAddress,omitempty"`
 }
 
-// AssertResourceLocationRequired checks if the required fields are not zero-ed
+// AssertResourceLocationRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertResourceLocationRequired(obj ResourceLocation) error {
 	for _, el := range obj.Contacts {
 		if err := AssertResourceLocationContactsInnerRequired(el); err != nil {
 			return err
 		}
 	}
-	if err := AssertResourceV1200PartLocationRequired(obj.PartLocation); err != nil {
+	if err := AssertResourceV1240PartLocationRequired(obj.PartLocation); err != nil {
 		return err
 	}
-	if err := AssertResourceV1200PhysicalAddressRequired(obj.PhysicalAddress); err != nil {
+	if err := AssertResourceV1240PhysicalAddressRequired(obj.PhysicalAddress); err != nil {
 		return err
 	}
-	if err := AssertResourceV1200PlacementRequired(obj.Placement); err != nil {
+	if err := AssertResourceV1240PlacementRequired(obj.Placement); err != nil {
 		return err
 	}
-	if err := AssertResourceV1200PostalAddressRequired(obj.PostalAddress); err != nil {
+	if err := AssertResourceV1240PostalAddressRequired(obj.PostalAddress); err != nil {
 		return err
 	}
 	return nil
@@ -78,16 +79,16 @@ func AssertResourceLocationConstraints(obj ResourceLocation) error {
 			return err
 		}
 	}
-	if err := AssertResourceV1200PartLocationConstraints(obj.PartLocation); err != nil {
+	if err := AssertResourceV1240PartLocationConstraints(obj.PartLocation); err != nil {
 		return err
 	}
-	if err := AssertResourceV1200PhysicalAddressConstraints(obj.PhysicalAddress); err != nil {
+	if err := AssertResourceV1240PhysicalAddressConstraints(obj.PhysicalAddress); err != nil {
 		return err
 	}
-	if err := AssertResourceV1200PlacementConstraints(obj.Placement); err != nil {
+	if err := AssertResourceV1240PlacementConstraints(obj.Placement); err != nil {
 		return err
 	}
-	if err := AssertResourceV1200PostalAddressConstraints(obj.PostalAddress); err != nil {
+	if err := AssertResourceV1240PostalAddressConstraints(obj.PostalAddress); err != nil {
 		return err
 	}
 	return nil

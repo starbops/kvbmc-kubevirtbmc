@@ -13,6 +13,10 @@ package server
 import "time"
 
 type ResourceStatusConditionsInner struct {
+
+	// The type of condition.
+	ConditionType *string `json:"ConditionType,omitempty"`
+
 	LogEntry OdataV4IdRef `json:"LogEntry,omitempty"`
 
 	// The human-readable message for this condition.
@@ -23,6 +27,9 @@ type ResourceStatusConditionsInner struct {
 
 	// The identifier for the message.
 	MessageId string `json:"MessageId"`
+
+	// The OEM extension.
+	Oem map[string]interface{} `json:"Oem,omitempty"`
 
 	OriginOfCondition OdataV4IdRef `json:"OriginOfCondition,omitempty"`
 
@@ -44,17 +51,9 @@ type ResourceStatusConditionsInner struct {
 	Username *string `json:"Username,omitempty"`
 }
 
-// AssertResourceStatusConditionsInnerRequired checks if the required fields are not zero-ed
+// AssertResourceStatusConditionsInnerRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertResourceStatusConditionsInnerRequired(obj ResourceStatusConditionsInner) error {
-	elements := map[string]interface{}{
-		"MessageId": obj.MessageId,
-	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
-		}
-	}
-
 	if err := AssertOdataV4IdRefRequired(obj.LogEntry); err != nil {
 		return err
 	}

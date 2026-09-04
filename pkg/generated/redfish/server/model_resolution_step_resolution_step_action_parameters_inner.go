@@ -30,7 +30,14 @@ type ResolutionStepResolutionStepActionParametersInner struct {
 	// The minimum number of array elements required for this parameter.
 	ArraySizeMinimum *int64 `json:"ArraySizeMinimum,omitempty"`
 
-	DataType ActionInfoV142ParameterTypes `json:"DataType,omitempty"`
+	// Information about conditional parameter requirements.
+	ConditionalRequirement *string `json:"ConditionalRequirement,omitempty"`
+
+	// The JSON property type for this parameter.
+	DataType *string `json:"DataType,omitempty"`
+
+	// The default value for this parameter.
+	DefaultValue *string `json:"DefaultValue,omitempty"`
 
 	// The maximum supported value for this parameter.
 	MaximumValue *float32 `json:"MaximumValue,omitempty"`
@@ -41,6 +48,9 @@ type ResolutionStepResolutionStepActionParametersInner struct {
 	// The name of the parameter for this action.
 	Name string `json:"Name"`
 
+	// Indicates that there is no default value for this parameter.
+	NoDefaultValue *bool `json:"NoDefaultValue,omitempty"`
+
 	// The data type of an object-based parameter.
 	ObjectDataType *string `json:"ObjectDataType,omitempty"`
 
@@ -48,17 +58,9 @@ type ResolutionStepResolutionStepActionParametersInner struct {
 	Required bool `json:"Required,omitempty"`
 }
 
-// AssertResolutionStepResolutionStepActionParametersInnerRequired checks if the required fields are not zero-ed
+// AssertResolutionStepResolutionStepActionParametersInnerRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertResolutionStepResolutionStepActionParametersInnerRequired(obj ResolutionStepResolutionStepActionParametersInner) error {
-	elements := map[string]interface{}{
-		"Name": obj.Name,
-	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
-		}
-	}
-
 	return nil
 }
 

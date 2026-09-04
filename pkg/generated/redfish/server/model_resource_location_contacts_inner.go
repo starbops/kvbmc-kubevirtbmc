@@ -22,7 +22,8 @@ type ResourceLocationContactsInner struct {
 	PhoneNumber *string `json:"PhoneNumber,omitempty"`
 }
 
-// AssertResourceLocationContactsInnerRequired checks if the required fields are not zero-ed
+// AssertResourceLocationContactsInnerRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertResourceLocationContactsInnerRequired(obj ResourceLocationContactsInner) error {
 	return nil
 }

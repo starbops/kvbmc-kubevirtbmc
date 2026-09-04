@@ -27,7 +27,10 @@ type Emulator struct {
 func NewEmulator(ctx context.Context, port int, bmcUser string, bmcPassword string, resourceManager resourcemanager.ResourceManager) *Emulator {
 	apiService := NewAPIService(bmcUser, bmcPassword, resourceManager)
 	apiController := server.NewDefaultAPIController(apiService, server.WithDefaultAPIErrorHandler(recordingErrorHandler))
-	router := server.NewRouter(session.AuthMiddleware(bmcUser, bmcPassword), routeFilter{apiController})
+	router := server.NewRouter(authFilter{
+		inner:      routeFilter{apiController},
+		middleware: session.AuthMiddleware(bmcUser, bmcPassword),
+	})
 
 	// Mount /healthz outside the access-log wrapper so readiness probes stay silent.
 	root := http.NewServeMux()
@@ -90,6 +93,61 @@ func (f routeFilter) Routes() server.Routes {
 		}
 	}
 	return routes
+}
+
+func (f routeFilter) OrderedRoutes() []server.Route {
+	ordered := f.inner.OrderedRoutes()
+	kept := ordered[:0]
+	for _, route := range ordered {
+		if implementedMethods[baseRouteName(route.Name)] {
+			kept = append(kept, route)
+		}
+	}
+	return kept
+}
+
+// publicRoutes are the routes a Redfish client must be able to reach before
+// it has a session: discovering the service root, and creating the session
+// itself. Everything else requires a valid session or basic-auth
+// credentials. This mirrors the auth split the OpenAPI generator's go-server
+// template used to hard-code directly into routers.go; that file is now
+// fully generated (and regenerated), so the split lives here instead, where
+// a generator upgrade can't silently drop it.
+var publicRoutes = map[string]bool{
+	"RedfishV1Get":                        true,
+	"RedfishV1SessionServiceSessionsPost": true,
+}
+
+// authFilter requires a valid session for every route except publicRoutes.
+type authFilter struct {
+	inner      server.Router
+	middleware func(http.Handler) http.Handler
+}
+
+func (f authFilter) Routes() server.Routes {
+	routes := f.inner.Routes()
+	wrapped := make(server.Routes, len(routes))
+	for name, route := range routes {
+		wrapped[name] = f.wrap(route)
+	}
+	return wrapped
+}
+
+func (f authFilter) OrderedRoutes() []server.Route {
+	ordered := f.inner.OrderedRoutes()
+	wrapped := make([]server.Route, len(ordered))
+	for i, route := range ordered {
+		wrapped[i] = f.wrap(route)
+	}
+	return wrapped
+}
+
+func (f authFilter) wrap(route server.Route) server.Route {
+	if publicRoutes[baseRouteName(route.Name)] {
+		return route
+	}
+	route.HandlerFunc = f.middleware(route.HandlerFunc).ServeHTTP
+	return route
 }
 
 // baseRouteName strips the _N suffix the OpenAPI generator appends to alias

@@ -23,6 +23,8 @@ const (
 	RESOURCEPOWERSTATE_POWERING_ON  ResourcePowerState = "PoweringOn"
 	RESOURCEPOWERSTATE_POWERING_OFF ResourcePowerState = "PoweringOff"
 	RESOURCEPOWERSTATE_PAUSED       ResourcePowerState = "Paused"
+	RESOURCEPOWERSTATE_SLEEPING     ResourcePowerState = "Sleeping"
+	RESOURCEPOWERSTATE_HIBERNATING  ResourcePowerState = "Hibernating"
 )
 
 // AllowedResourcePowerStateEnumValues is all the allowed values of ResourcePowerState enum
@@ -32,6 +34,8 @@ var AllowedResourcePowerStateEnumValues = []ResourcePowerState{
 	"PoweringOn",
 	"PoweringOff",
 	"Paused",
+	"Sleeping",
+	"Hibernating",
 }
 
 // validResourcePowerStateEnumValue provides a map of ResourcePowerStates for fast verification of use input
@@ -41,6 +45,8 @@ var validResourcePowerStateEnumValues = map[ResourcePowerState]struct{}{
 	"PoweringOn":  {},
 	"PoweringOff": {},
 	"Paused":      {},
+	"Sleeping":    {},
+	"Hibernating": {},
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
@@ -60,7 +66,8 @@ func NewResourcePowerStateFromValue(v string) (ResourcePowerState, error) {
 	return "", fmt.Errorf("invalid value '%v' for ResourcePowerState: valid values are %v", v, AllowedResourcePowerStateEnumValues)
 }
 
-// AssertResourcePowerStateRequired checks if the required fields are not zero-ed
+// AssertResourcePowerStateRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertResourcePowerStateRequired(obj ResourcePowerState) error {
 	return nil
 }

@@ -11,6 +11,8 @@
 package server
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -114,7 +116,7 @@ type ComputerSystemV1220ComputerSystem struct {
 	// The OEM extension.
 	Oem map[string]interface{} `json:"Oem,omitempty"`
 
-	OperatingSystem string `json:"OperatingSystem,omitempty"`
+	OperatingSystem OdataV4IdRef `json:"OperatingSystem,omitempty"`
 
 	// The link to a collection of PCIe devices that this computer system uses.
 	PCIeDevices []OdataV4IdRef `json:"PCIeDevices,omitempty"`
@@ -190,20 +192,472 @@ type ComputerSystemV1220ComputerSystem struct {
 	VirtualMediaConfig ComputerSystemV1220VirtualMediaConfig `json:"VirtualMediaConfig,omitempty"`
 }
 
-// AssertComputerSystemV1220ComputerSystemRequired checks if the required fields are not zero-ed
-func AssertComputerSystemV1220ComputerSystemRequired(obj ComputerSystemV1220ComputerSystem) error {
-	elements := map[string]interface{}{
-		"@odata.id":   obj.OdataId,
-		"@odata.type": obj.OdataType,
-		"Id":          obj.Id,
-		"Name":        obj.Name,
+// UnmarshalJSON validates required property keys then unmarshals into ComputerSystemV1220ComputerSystem
+func (o *ComputerSystemV1220ComputerSystem) UnmarshalJSON(data []byte) (err error) {
+	// Presence is checked against required fields that exist on this struct,
+	// including fields promoted from embedded allOf parents.
+	requiredProperties := []string{
+		"Id",
+		"Name",
 	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
+
+	requiredNullableProperties := map[string]bool{
+		"Id":   false,
+		"Name": false,
+	}
+
+	allowedJsonKeys := map[string]struct{}{
+		"@odata.context":            {},
+		"@odata.etag":               {},
+		"@odata.id":                 {},
+		"@odata.type":               {},
+		"Actions":                   {},
+		"AssetTag":                  {},
+		"Bios":                      {},
+		"BiosVersion":               {},
+		"Boot":                      {},
+		"BootProgress":              {},
+		"Certificates":              {},
+		"Composition":               {},
+		"Description":               {},
+		"EthernetInterfaces":        {},
+		"FabricAdapters":            {},
+		"GraphicalConsole":          {},
+		"GraphicsControllers":       {},
+		"HostName":                  {},
+		"HostWatchdogTimer":         {},
+		"HostedServices":            {},
+		"HostingRoles":              {},
+		"Id":                        {},
+		"IdlePowerSaver":            {},
+		"IndicatorLED":              {},
+		"KeyManagement":             {},
+		"LastResetTime":             {},
+		"Links":                     {},
+		"LocationIndicatorActive":   {},
+		"LogServices":               {},
+		"Manufacturer":              {},
+		"ManufacturingMode":         {},
+		"Measurements":              {},
+		"Memory":                    {},
+		"MemoryDomains":             {},
+		"MemorySummary":             {},
+		"Model":                     {},
+		"Name":                      {},
+		"NetworkInterfaces":         {},
+		"Oem":                       {},
+		"OperatingSystem":           {},
+		"PCIeDevices":               {},
+		"PCIeDevices@odata.count":   {},
+		"PCIeFunctions":             {},
+		"PCIeFunctions@odata.count": {},
+		"PartNumber":                {},
+		"PowerCycleDelaySeconds":    {},
+		"PowerMode":                 {},
+		"PowerOffDelaySeconds":      {},
+		"PowerOnDelaySeconds":       {},
+		"PowerRestorePolicy":        {},
+		"PowerState":                {},
+		"ProcessorSummary":          {},
+		"Processors":                {},
+		"Redundancy":                {},
+		"Redundancy@odata.count":    {},
+		"SKU":                       {},
+		"SecureBoot":                {},
+		"SerialConsole":             {},
+		"SerialNumber":              {},
+		"SimpleStorage":             {},
+		"Status":                    {},
+		"Storage":                   {},
+		"SubModel":                  {},
+		"SystemType":                {},
+		"TrustedModules":            {},
+		"USBControllers":            {},
+		"UUID":                      {},
+		"VirtualMedia":              {},
+		"VirtualMediaConfig":        {},
+	}
+
+	allProperties := make(map[string]json.RawMessage)
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err
+	}
+
+	for _, requiredProperty := range requiredProperties {
+		value, exists := allProperties[requiredProperty]
+		if !exists {
+			return &RequiredError{Field: requiredProperty}
+		}
+		if string(value) == "null" && !requiredNullableProperties[requiredProperty] {
+			return &RequiredError{Field: requiredProperty}
 		}
 	}
 
+	for key := range allProperties {
+		if _, exists := allowedJsonKeys[key]; !exists {
+			return fmt.Errorf("json: unknown field %q", key)
+		}
+	}
+
+	var decoded ComputerSystemV1220ComputerSystem
+
+	if value, exists := allProperties["@odata.context"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataContext); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.etag"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataEtag); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.id"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataId); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.type"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataType); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Actions"]; exists {
+		if err = json.Unmarshal(value, &decoded.Actions); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["AssetTag"]; exists {
+		if err = json.Unmarshal(value, &decoded.AssetTag); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Bios"]; exists {
+		if err = json.Unmarshal(value, &decoded.Bios); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["BiosVersion"]; exists {
+		if err = json.Unmarshal(value, &decoded.BiosVersion); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Boot"]; exists {
+		if err = json.Unmarshal(value, &decoded.Boot); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["BootProgress"]; exists {
+		if err = json.Unmarshal(value, &decoded.BootProgress); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Certificates"]; exists {
+		if err = json.Unmarshal(value, &decoded.Certificates); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Composition"]; exists {
+		if err = json.Unmarshal(value, &decoded.Composition); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Description"]; exists {
+		if err = json.Unmarshal(value, &decoded.Description); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["EthernetInterfaces"]; exists {
+		if err = json.Unmarshal(value, &decoded.EthernetInterfaces); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["FabricAdapters"]; exists {
+		if err = json.Unmarshal(value, &decoded.FabricAdapters); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["GraphicalConsole"]; exists {
+		if err = json.Unmarshal(value, &decoded.GraphicalConsole); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["GraphicsControllers"]; exists {
+		if err = json.Unmarshal(value, &decoded.GraphicsControllers); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["HostName"]; exists {
+		if err = json.Unmarshal(value, &decoded.HostName); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["HostWatchdogTimer"]; exists {
+		if err = json.Unmarshal(value, &decoded.HostWatchdogTimer); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["HostedServices"]; exists {
+		if err = json.Unmarshal(value, &decoded.HostedServices); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["HostingRoles"]; exists {
+		if err = json.Unmarshal(value, &decoded.HostingRoles); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Id"]; exists {
+		if err = json.Unmarshal(value, &decoded.Id); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["IdlePowerSaver"]; exists {
+		if err = json.Unmarshal(value, &decoded.IdlePowerSaver); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["IndicatorLED"]; exists {
+		if err = json.Unmarshal(value, &decoded.IndicatorLED); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["KeyManagement"]; exists {
+		if err = json.Unmarshal(value, &decoded.KeyManagement); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["LastResetTime"]; exists {
+		if err = json.Unmarshal(value, &decoded.LastResetTime); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Links"]; exists {
+		if err = json.Unmarshal(value, &decoded.Links); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["LocationIndicatorActive"]; exists {
+		if err = json.Unmarshal(value, &decoded.LocationIndicatorActive); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["LogServices"]; exists {
+		if err = json.Unmarshal(value, &decoded.LogServices); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Manufacturer"]; exists {
+		if err = json.Unmarshal(value, &decoded.Manufacturer); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ManufacturingMode"]; exists {
+		if err = json.Unmarshal(value, &decoded.ManufacturingMode); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Measurements"]; exists {
+		if err = json.Unmarshal(value, &decoded.Measurements); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Memory"]; exists {
+		if err = json.Unmarshal(value, &decoded.Memory); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["MemoryDomains"]; exists {
+		if err = json.Unmarshal(value, &decoded.MemoryDomains); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["MemorySummary"]; exists {
+		if err = json.Unmarshal(value, &decoded.MemorySummary); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Model"]; exists {
+		if err = json.Unmarshal(value, &decoded.Model); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Name"]; exists {
+		if err = json.Unmarshal(value, &decoded.Name); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["NetworkInterfaces"]; exists {
+		if err = json.Unmarshal(value, &decoded.NetworkInterfaces); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Oem"]; exists {
+		if err = json.Unmarshal(value, &decoded.Oem); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["OperatingSystem"]; exists {
+		if err = json.Unmarshal(value, &decoded.OperatingSystem); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PCIeDevices"]; exists {
+		if err = json.Unmarshal(value, &decoded.PCIeDevices); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PCIeDevices@odata.count"]; exists {
+		if err = json.Unmarshal(value, &decoded.PCIeDevicesodataCount); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PCIeFunctions"]; exists {
+		if err = json.Unmarshal(value, &decoded.PCIeFunctions); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PCIeFunctions@odata.count"]; exists {
+		if err = json.Unmarshal(value, &decoded.PCIeFunctionsodataCount); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PartNumber"]; exists {
+		if err = json.Unmarshal(value, &decoded.PartNumber); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PowerCycleDelaySeconds"]; exists {
+		if err = json.Unmarshal(value, &decoded.PowerCycleDelaySeconds); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PowerMode"]; exists {
+		if err = json.Unmarshal(value, &decoded.PowerMode); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PowerOffDelaySeconds"]; exists {
+		if err = json.Unmarshal(value, &decoded.PowerOffDelaySeconds); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PowerOnDelaySeconds"]; exists {
+		if err = json.Unmarshal(value, &decoded.PowerOnDelaySeconds); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PowerRestorePolicy"]; exists {
+		if err = json.Unmarshal(value, &decoded.PowerRestorePolicy); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PowerState"]; exists {
+		if err = json.Unmarshal(value, &decoded.PowerState); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ProcessorSummary"]; exists {
+		if err = json.Unmarshal(value, &decoded.ProcessorSummary); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Processors"]; exists {
+		if err = json.Unmarshal(value, &decoded.Processors); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Redundancy"]; exists {
+		if err = json.Unmarshal(value, &decoded.Redundancy); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Redundancy@odata.count"]; exists {
+		if err = json.Unmarshal(value, &decoded.RedundancyodataCount); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SKU"]; exists {
+		if err = json.Unmarshal(value, &decoded.SKU); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SecureBoot"]; exists {
+		if err = json.Unmarshal(value, &decoded.SecureBoot); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SerialConsole"]; exists {
+		if err = json.Unmarshal(value, &decoded.SerialConsole); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SerialNumber"]; exists {
+		if err = json.Unmarshal(value, &decoded.SerialNumber); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SimpleStorage"]; exists {
+		if err = json.Unmarshal(value, &decoded.SimpleStorage); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Status"]; exists {
+		if err = json.Unmarshal(value, &decoded.Status); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Storage"]; exists {
+		if err = json.Unmarshal(value, &decoded.Storage); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SubModel"]; exists {
+		if err = json.Unmarshal(value, &decoded.SubModel); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SystemType"]; exists {
+		if err = json.Unmarshal(value, &decoded.SystemType); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["TrustedModules"]; exists {
+		if err = json.Unmarshal(value, &decoded.TrustedModules); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["USBControllers"]; exists {
+		if err = json.Unmarshal(value, &decoded.USBControllers); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["UUID"]; exists {
+		if err = json.Unmarshal(value, &decoded.UUID); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["VirtualMedia"]; exists {
+		if err = json.Unmarshal(value, &decoded.VirtualMedia); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["VirtualMediaConfig"]; exists {
+		if err = json.Unmarshal(value, &decoded.VirtualMediaConfig); err != nil {
+			return err
+		}
+	}
+
+	*o = decoded
+
+	return nil
+}
+
+// AssertComputerSystemV1220ComputerSystemRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
+func AssertComputerSystemV1220ComputerSystemRequired(obj ComputerSystemV1220ComputerSystem) error {
 	if err := AssertComputerSystemV1220ActionsRequired(obj.Actions); err != nil {
 		return err
 	}
@@ -269,26 +723,14 @@ func AssertComputerSystemV1220ComputerSystemRequired(obj ComputerSystemV1220Comp
 	if err := AssertOdataV4IdRefRequired(obj.NetworkInterfaces); err != nil {
 		return err
 	}
-	for _, el := range obj.PCIeDevices {
-		if err := AssertOdataV4IdRefRequired(el); err != nil {
-			return err
-		}
-	}
-	for _, el := range obj.PCIeFunctions {
-		if err := AssertOdataV4IdRefRequired(el); err != nil {
-			return err
-		}
+	if err := AssertOdataV4IdRefRequired(obj.OperatingSystem); err != nil {
+		return err
 	}
 	if err := AssertComputerSystemV1220ProcessorSummaryRequired(obj.ProcessorSummary); err != nil {
 		return err
 	}
 	if err := AssertOdataV4IdRefRequired(obj.Processors); err != nil {
 		return err
-	}
-	for _, el := range obj.Redundancy {
-		if err := AssertRedundancyRedundancyRequired(el); err != nil {
-			return err
-		}
 	}
 	if err := AssertOdataV4IdRefRequired(obj.SecureBoot); err != nil {
 		return err
@@ -389,26 +831,14 @@ func AssertComputerSystemV1220ComputerSystemConstraints(obj ComputerSystemV1220C
 	if err := AssertOdataV4IdRefConstraints(obj.NetworkInterfaces); err != nil {
 		return err
 	}
-	for _, el := range obj.PCIeDevices {
-		if err := AssertOdataV4IdRefConstraints(el); err != nil {
-			return err
-		}
-	}
-	for _, el := range obj.PCIeFunctions {
-		if err := AssertOdataV4IdRefConstraints(el); err != nil {
-			return err
-		}
+	if err := AssertOdataV4IdRefConstraints(obj.OperatingSystem); err != nil {
+		return err
 	}
 	if err := AssertComputerSystemV1220ProcessorSummaryConstraints(obj.ProcessorSummary); err != nil {
 		return err
 	}
 	if err := AssertOdataV4IdRefConstraints(obj.Processors); err != nil {
 		return err
-	}
-	for _, el := range obj.Redundancy {
-		if err := AssertRedundancyRedundancyConstraints(el); err != nil {
-			return err
-		}
 	}
 	if err := AssertOdataV4IdRefConstraints(obj.SecureBoot); err != nil {
 		return err

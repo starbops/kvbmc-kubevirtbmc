@@ -11,7 +11,8 @@
 package server
 
 import (
-	"errors"
+	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -39,7 +40,7 @@ type TaskV173Task struct {
 	EndTime time.Time `json:"EndTime,omitempty"`
 
 	// The estimated total time required to complete the task.
-	EstimatedDuration *string `json:"EstimatedDuration,omitempty" validate:"regexp=^P(\\\\d+D)?(T(\\\\d+H)?(\\\\d+M)?(\\\\d+(.\\\\d+)?S)?)?$"`
+	EstimatedDuration *string `json:"EstimatedDuration,omitempty" validate:"regexp=^P(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+(.\\d+)?S)?)?$"`
 
 	// An indication of whether the contents of the payload are hidden from view after the task has been created.  If `true`, responses do not return the payload.  If `false`, responses return the payload.  If this property is not present when the task is created, the default is `false`.
 	HidePayload bool `json:"HidePayload,omitempty"`
@@ -76,20 +77,184 @@ type TaskV173Task struct {
 	TaskStatus ResourceHealth `json:"TaskStatus,omitempty"`
 }
 
-// AssertTaskV173TaskRequired checks if the required fields are not zero-ed
-func AssertTaskV173TaskRequired(obj TaskV173Task) error {
-	elements := map[string]interface{}{
-		"@odata.id":   obj.OdataId,
-		"@odata.type": obj.OdataType,
-		"Id":          obj.Id,
-		"Name":        obj.Name,
+// UnmarshalJSON validates required property keys then unmarshals into TaskV173Task
+func (o *TaskV173Task) UnmarshalJSON(data []byte) (err error) {
+	// Presence is checked against required fields that exist on this struct,
+	// including fields promoted from embedded allOf parents.
+	requiredProperties := []string{
+		"Id",
+		"Name",
 	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
+
+	requiredNullableProperties := map[string]bool{
+		"Id":   false,
+		"Name": false,
+	}
+
+	allowedJsonKeys := map[string]struct{}{
+		"@odata.context":    {},
+		"@odata.etag":       {},
+		"@odata.id":         {},
+		"@odata.type":       {},
+		"Actions":           {},
+		"Description":       {},
+		"EndTime":           {},
+		"EstimatedDuration": {},
+		"HidePayload":       {},
+		"Id":                {},
+		"Links":             {},
+		"Messages":          {},
+		"Name":              {},
+		"Oem":               {},
+		"Payload":           {},
+		"PercentComplete":   {},
+		"StartTime":         {},
+		"SubTasks":          {},
+		"TaskMonitor":       {},
+		"TaskState":         {},
+		"TaskStatus":        {},
+	}
+
+	allProperties := make(map[string]json.RawMessage)
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err
+	}
+
+	for _, requiredProperty := range requiredProperties {
+		value, exists := allProperties[requiredProperty]
+		if !exists {
+			return &RequiredError{Field: requiredProperty}
+		}
+		if string(value) == "null" && !requiredNullableProperties[requiredProperty] {
+			return &RequiredError{Field: requiredProperty}
 		}
 	}
 
+	for key := range allProperties {
+		if _, exists := allowedJsonKeys[key]; !exists {
+			return fmt.Errorf("json: unknown field %q", key)
+		}
+	}
+
+	var decoded TaskV173Task
+
+	if value, exists := allProperties["@odata.context"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataContext); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.etag"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataEtag); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.id"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataId); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.type"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataType); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Actions"]; exists {
+		if err = json.Unmarshal(value, &decoded.Actions); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Description"]; exists {
+		if err = json.Unmarshal(value, &decoded.Description); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["EndTime"]; exists {
+		if err = json.Unmarshal(value, &decoded.EndTime); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["EstimatedDuration"]; exists {
+		if err = json.Unmarshal(value, &decoded.EstimatedDuration); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["HidePayload"]; exists {
+		if err = json.Unmarshal(value, &decoded.HidePayload); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Id"]; exists {
+		if err = json.Unmarshal(value, &decoded.Id); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Links"]; exists {
+		if err = json.Unmarshal(value, &decoded.Links); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Messages"]; exists {
+		if err = json.Unmarshal(value, &decoded.Messages); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Name"]; exists {
+		if err = json.Unmarshal(value, &decoded.Name); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Oem"]; exists {
+		if err = json.Unmarshal(value, &decoded.Oem); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Payload"]; exists {
+		if err = json.Unmarshal(value, &decoded.Payload); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PercentComplete"]; exists {
+		if err = json.Unmarshal(value, &decoded.PercentComplete); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["StartTime"]; exists {
+		if err = json.Unmarshal(value, &decoded.StartTime); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SubTasks"]; exists {
+		if err = json.Unmarshal(value, &decoded.SubTasks); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["TaskMonitor"]; exists {
+		if err = json.Unmarshal(value, &decoded.TaskMonitor); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["TaskState"]; exists {
+		if err = json.Unmarshal(value, &decoded.TaskState); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["TaskStatus"]; exists {
+		if err = json.Unmarshal(value, &decoded.TaskStatus); err != nil {
+			return err
+		}
+	}
+
+	*o = decoded
+
+	return nil
+}
+
+// AssertTaskV173TaskRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
+func AssertTaskV173TaskRequired(obj TaskV173Task) error {
 	if err := AssertTaskV173ActionsRequired(obj.Actions); err != nil {
 		return err
 	}
@@ -125,12 +290,6 @@ func AssertTaskV173TaskConstraints(obj TaskV173Task) error {
 	}
 	if err := AssertTaskV173PayloadConstraints(obj.Payload); err != nil {
 		return err
-	}
-	if obj.PercentComplete != nil && *obj.PercentComplete < 0 {
-		return &ParsingError{Param: "PercentComplete", Err: errors.New(errMsgMinValueConstraint)}
-	}
-	if obj.PercentComplete != nil && *obj.PercentComplete > 100 {
-		return &ParsingError{Param: "PercentComplete", Err: errors.New(errMsgMaxValueConstraint)}
 	}
 	if err := AssertOdataV4IdRefConstraints(obj.SubTasks); err != nil {
 		return err

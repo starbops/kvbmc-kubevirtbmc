@@ -10,13 +10,24 @@
 
 package server
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 // RedundancyRedundancy - The common redundancy definition and structure used in other Redfish schemas.
 type RedundancyRedundancy struct {
 
 	// The unique identifier for a resource.
 	OdataId string `json:"@odata.id"`
 
-	Actions RedundancyV142Actions `json:"Actions,omitempty"`
+	Actions RedundancyV170Actions `json:"Actions,omitempty"`
+
+	// The links to the active members included in this redundancy set.
+	ActiveRedundancySet []OdataV4IdRef `json:"ActiveRedundancySet,omitempty"`
+
+	// The number of items in a collection.
+	ActiveRedundancySetodataCount int64 `json:"ActiveRedundancySet@odata.count,omitempty"`
 
 	// The maximum number of members allowable for this particular redundancy group.
 	MaxNumSupported *int64 `json:"MaxNumSupported,omitempty"`
@@ -24,10 +35,14 @@ type RedundancyRedundancy struct {
 	// The unique identifier for the member within an array.
 	MemberId string `json:"MemberId"`
 
-	// The minimum number of members needed for this group to be redundant.
+	// The minimum number of members needed for this group to remain operational or functional.
 	MinNumNeeded *int64 `json:"MinNumNeeded"`
 
-	Mode *RedundancyV142RedundancyMode `json:"Mode"`
+	// The minimum number of members needed for this group to be redundant.
+	MinNumNeededForFaultTolerance *int64 `json:"MinNumNeededForFaultTolerance,omitempty"`
+
+	// The redundancy mode of the group.
+	Mode *string `json:"Mode"`
 
 	// The name of the resource or array member.
 	Name string `json:"Name"`
@@ -47,16 +62,150 @@ type RedundancyRedundancy struct {
 	Status ResourceStatus `json:"Status"`
 }
 
-// AssertRedundancyRedundancyRequired checks if the required fields are not zero-ed
+// UnmarshalJSON validates required property keys then unmarshals into RedundancyRedundancy
+func (o *RedundancyRedundancy) UnmarshalJSON(data []byte) (err error) {
+	// Presence is checked against required fields that exist on this struct,
+	// including fields promoted from embedded allOf parents.
+	requiredProperties := []string{
+		"Mode",
+		"Status",
+	}
+
+	requiredNullableProperties := map[string]bool{
+		"Mode":   true,
+		"Status": false,
+	}
+
+	allowedJsonKeys := map[string]struct{}{
+		"@odata.id":                       {},
+		"Actions":                         {},
+		"ActiveRedundancySet":             {},
+		"ActiveRedundancySet@odata.count": {},
+		"MaxNumSupported":                 {},
+		"MemberId":                        {},
+		"MinNumNeeded":                    {},
+		"MinNumNeededForFaultTolerance":   {},
+		"Mode":                            {},
+		"Name":                            {},
+		"Oem":                             {},
+		"RedundancyEnabled":               {},
+		"RedundancySet":                   {},
+		"RedundancySet@odata.count":       {},
+		"Status":                          {},
+	}
+
+	allProperties := make(map[string]json.RawMessage)
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err
+	}
+
+	for _, requiredProperty := range requiredProperties {
+		value, exists := allProperties[requiredProperty]
+		if !exists {
+			return &RequiredError{Field: requiredProperty}
+		}
+		if string(value) == "null" && !requiredNullableProperties[requiredProperty] {
+			return &RequiredError{Field: requiredProperty}
+		}
+	}
+
+	for key := range allProperties {
+		if _, exists := allowedJsonKeys[key]; !exists {
+			return fmt.Errorf("json: unknown field %q", key)
+		}
+	}
+
+	var decoded RedundancyRedundancy
+
+	if value, exists := allProperties["@odata.id"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataId); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Actions"]; exists {
+		if err = json.Unmarshal(value, &decoded.Actions); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ActiveRedundancySet"]; exists {
+		if err = json.Unmarshal(value, &decoded.ActiveRedundancySet); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ActiveRedundancySet@odata.count"]; exists {
+		if err = json.Unmarshal(value, &decoded.ActiveRedundancySetodataCount); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["MaxNumSupported"]; exists {
+		if err = json.Unmarshal(value, &decoded.MaxNumSupported); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["MemberId"]; exists {
+		if err = json.Unmarshal(value, &decoded.MemberId); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["MinNumNeeded"]; exists {
+		if err = json.Unmarshal(value, &decoded.MinNumNeeded); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["MinNumNeededForFaultTolerance"]; exists {
+		if err = json.Unmarshal(value, &decoded.MinNumNeededForFaultTolerance); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Mode"]; exists {
+		if err = json.Unmarshal(value, &decoded.Mode); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Name"]; exists {
+		if err = json.Unmarshal(value, &decoded.Name); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Oem"]; exists {
+		if err = json.Unmarshal(value, &decoded.Oem); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["RedundancyEnabled"]; exists {
+		if err = json.Unmarshal(value, &decoded.RedundancyEnabled); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["RedundancySet"]; exists {
+		if err = json.Unmarshal(value, &decoded.RedundancySet); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["RedundancySet@odata.count"]; exists {
+		if err = json.Unmarshal(value, &decoded.RedundancySetodataCount); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Status"]; exists {
+		if err = json.Unmarshal(value, &decoded.Status); err != nil {
+			return err
+		}
+	}
+
+	*o = decoded
+
+	return nil
+}
+
+// AssertRedundancyRedundancyRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertRedundancyRedundancyRequired(obj RedundancyRedundancy) error {
 	elements := map[string]interface{}{
-		"@odata.id":     obj.OdataId,
-		"MemberId":      obj.MemberId,
-		"MinNumNeeded":  obj.MinNumNeeded,
-		"Mode":          obj.Mode,
-		"Name":          obj.Name,
-		"RedundancySet": obj.RedundancySet,
-		"Status":        obj.Status,
+		"Status": obj.Status,
 	}
 	for name, el := range elements {
 		if isZero := IsZeroValue(el); isZero {
@@ -64,11 +213,11 @@ func AssertRedundancyRedundancyRequired(obj RedundancyRedundancy) error {
 		}
 	}
 
-	if err := AssertRedundancyV142ActionsRequired(obj.Actions); err != nil {
+	if err := AssertRedundancyV170ActionsRequired(obj.Actions); err != nil {
 		return err
 	}
-	for _, el := range obj.RedundancySet {
-		if err := AssertOdataV4IdRefRequired(el); err != nil {
+	if obj.Mode != nil {
+		if err := AssertstringRequired(*obj.Mode); err != nil {
 			return err
 		}
 	}
@@ -80,11 +229,11 @@ func AssertRedundancyRedundancyRequired(obj RedundancyRedundancy) error {
 
 // AssertRedundancyRedundancyConstraints checks if the values respects the defined constraints
 func AssertRedundancyRedundancyConstraints(obj RedundancyRedundancy) error {
-	if err := AssertRedundancyV142ActionsConstraints(obj.Actions); err != nil {
+	if err := AssertRedundancyV170ActionsConstraints(obj.Actions); err != nil {
 		return err
 	}
-	for _, el := range obj.RedundancySet {
-		if err := AssertOdataV4IdRefConstraints(el); err != nil {
+	if obj.Mode != nil {
+		if err := AssertstringConstraints(*obj.Mode); err != nil {
 			return err
 		}
 	}

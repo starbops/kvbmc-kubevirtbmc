@@ -10,10 +10,6 @@
 
 package server
 
-import (
-	"errors"
-)
-
 // ResolutionStepResolutionStep - This type describes a recommended step of the service-defined resolution.
 type ResolutionStepResolutionStep struct {
 
@@ -29,7 +25,8 @@ type ResolutionStepResolutionStep struct {
 	// The priority in the set of resolution steps.
 	Priority *int64 `json:"Priority,omitempty"`
 
-	ResolutionType *ResolutionStepV101ResolutionType `json:"ResolutionType"`
+	// The type of the resolution step.
+	ResolutionType *string `json:"ResolutionType"`
 
 	// The number of retries for a resolution step.
 	RetryCount *int64 `json:"RetryCount,omitempty"`
@@ -41,17 +38,9 @@ type ResolutionStepResolutionStep struct {
 	TargetComponentURI *string `json:"TargetComponentURI,omitempty"`
 }
 
-// AssertResolutionStepResolutionStepRequired checks if the required fields are not zero-ed
+// AssertResolutionStepResolutionStepRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertResolutionStepResolutionStepRequired(obj ResolutionStepResolutionStep) error {
-	elements := map[string]interface{}{
-		"ResolutionType": obj.ResolutionType,
-	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
-		}
-	}
-
 	for _, el := range obj.ActionParameters {
 		if err := AssertResolutionStepResolutionStepActionParametersInnerRequired(el); err != nil {
 			return err
@@ -66,15 +55,6 @@ func AssertResolutionStepResolutionStepConstraints(obj ResolutionStepResolutionS
 		if err := AssertResolutionStepResolutionStepActionParametersInnerConstraints(el); err != nil {
 			return err
 		}
-	}
-	if obj.Priority != nil && *obj.Priority < 0 {
-		return &ParsingError{Param: "Priority", Err: errors.New(errMsgMinValueConstraint)}
-	}
-	if obj.RetryCount != nil && *obj.RetryCount < 0 {
-		return &ParsingError{Param: "RetryCount", Err: errors.New(errMsgMinValueConstraint)}
-	}
-	if obj.RetryIntervalSeconds != nil && *obj.RetryIntervalSeconds < 0 {
-		return &ParsingError{Param: "RetryIntervalSeconds", Err: errors.New(errMsgMinValueConstraint)}
 	}
 	return nil
 }

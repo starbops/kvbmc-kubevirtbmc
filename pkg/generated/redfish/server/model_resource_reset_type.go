@@ -30,6 +30,9 @@ const (
 	RESOURCERESETTYPE_SUSPEND           ResourceResetType = "Suspend"
 	RESOURCERESETTYPE_PAUSE             ResourceResetType = "Pause"
 	RESOURCERESETTYPE_RESUME            ResourceResetType = "Resume"
+	RESOURCERESETTYPE_FULL_POWER_CYCLE  ResourceResetType = "FullPowerCycle"
+	RESOURCERESETTYPE_SLEEP             ResourceResetType = "Sleep"
+	RESOURCERESETTYPE_HIBERNATE         ResourceResetType = "Hibernate"
 )
 
 // AllowedResourceResetTypeEnumValues is all the allowed values of ResourceResetType enum
@@ -46,6 +49,9 @@ var AllowedResourceResetTypeEnumValues = []ResourceResetType{
 	"Suspend",
 	"Pause",
 	"Resume",
+	"FullPowerCycle",
+	"Sleep",
+	"Hibernate",
 }
 
 // validResourceResetTypeEnumValue provides a map of ResourceResetTypes for fast verification of use input
@@ -62,6 +68,9 @@ var validResourceResetTypeEnumValues = map[ResourceResetType]struct{}{
 	"Suspend":          {},
 	"Pause":            {},
 	"Resume":           {},
+	"FullPowerCycle":   {},
+	"Sleep":            {},
+	"Hibernate":        {},
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise
@@ -81,7 +90,8 @@ func NewResourceResetTypeFromValue(v string) (ResourceResetType, error) {
 	return "", fmt.Errorf("invalid value '%v' for ResourceResetType: valid values are %v", v, AllowedResourceResetTypeEnumValues)
 }
 
-// AssertResourceResetTypeRequired checks if the required fields are not zero-ed
+// AssertResourceResetTypeRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertResourceResetTypeRequired(obj ResourceResetType) error {
 	return nil
 }

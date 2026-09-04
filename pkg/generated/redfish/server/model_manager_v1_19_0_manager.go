@@ -11,6 +11,8 @@
 package server
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -149,20 +151,370 @@ type ManagerV1190Manager struct {
 	VirtualMedia OdataV4IdRef `json:"VirtualMedia,omitempty"`
 }
 
-// AssertManagerV1190ManagerRequired checks if the required fields are not zero-ed
-func AssertManagerV1190ManagerRequired(obj ManagerV1190Manager) error {
-	elements := map[string]interface{}{
-		"@odata.id":   obj.OdataId,
-		"@odata.type": obj.OdataType,
-		"Id":          obj.Id,
-		"Name":        obj.Name,
+// UnmarshalJSON validates required property keys then unmarshals into ManagerV1190Manager
+func (o *ManagerV1190Manager) UnmarshalJSON(data []byte) (err error) {
+	// Presence is checked against required fields that exist on this struct,
+	// including fields promoted from embedded allOf parents.
+	requiredProperties := []string{
+		"Id",
+		"Name",
 	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
+
+	requiredNullableProperties := map[string]bool{
+		"Id":   false,
+		"Name": false,
+	}
+
+	allowedJsonKeys := map[string]struct{}{
+		"@odata.context":             {},
+		"@odata.etag":                {},
+		"@odata.id":                  {},
+		"@odata.type":                {},
+		"Actions":                    {},
+		"AdditionalFirmwareVersions": {},
+		"AutoDSTEnabled":             {},
+		"Certificates":               {},
+		"CommandShell":               {},
+		"DateTime":                   {},
+		"DateTimeLocalOffset":        {},
+		"DaylightSavingTime":         {},
+		"DedicatedNetworkPorts":      {},
+		"Description":                {},
+		"EthernetInterfaces":         {},
+		"FirmwareVersion":            {},
+		"GraphicalConsole":           {},
+		"HostInterfaces":             {},
+		"Id":                         {},
+		"LastResetTime":              {},
+		"Links":                      {},
+		"Location":                   {},
+		"LocationIndicatorActive":    {},
+		"LogServices":                {},
+		"ManagerDiagnosticData":      {},
+		"ManagerType":                {},
+		"Manufacturer":               {},
+		"Measurements":               {},
+		"Model":                      {},
+		"Name":                       {},
+		"NetworkProtocol":            {},
+		"Oem":                        {},
+		"PartNumber":                 {},
+		"PowerState":                 {},
+		"Redundancy":                 {},
+		"Redundancy@odata.count":     {},
+		"RemoteAccountService":       {},
+		"RemoteRedfishServiceUri":    {},
+		"SecurityPolicy":             {},
+		"SerialConsole":              {},
+		"SerialInterfaces":           {},
+		"SerialNumber":               {},
+		"ServiceEntryPointUUID":      {},
+		"ServiceIdentification":      {},
+		"SharedNetworkPorts":         {},
+		"SparePartNumber":            {},
+		"Status":                     {},
+		"TimeZoneName":               {},
+		"USBPorts":                   {},
+		"UUID":                       {},
+		"Version":                    {},
+		"VirtualMedia":               {},
+	}
+
+	allProperties := make(map[string]json.RawMessage)
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err
+	}
+
+	for _, requiredProperty := range requiredProperties {
+		value, exists := allProperties[requiredProperty]
+		if !exists {
+			return &RequiredError{Field: requiredProperty}
+		}
+		if string(value) == "null" && !requiredNullableProperties[requiredProperty] {
+			return &RequiredError{Field: requiredProperty}
 		}
 	}
 
+	for key := range allProperties {
+		if _, exists := allowedJsonKeys[key]; !exists {
+			return fmt.Errorf("json: unknown field %q", key)
+		}
+	}
+
+	var decoded ManagerV1190Manager
+
+	if value, exists := allProperties["@odata.context"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataContext); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.etag"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataEtag); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.id"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataId); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["@odata.type"]; exists {
+		if err = json.Unmarshal(value, &decoded.OdataType); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Actions"]; exists {
+		if err = json.Unmarshal(value, &decoded.Actions); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["AdditionalFirmwareVersions"]; exists {
+		if err = json.Unmarshal(value, &decoded.AdditionalFirmwareVersions); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["AutoDSTEnabled"]; exists {
+		if err = json.Unmarshal(value, &decoded.AutoDSTEnabled); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Certificates"]; exists {
+		if err = json.Unmarshal(value, &decoded.Certificates); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["CommandShell"]; exists {
+		if err = json.Unmarshal(value, &decoded.CommandShell); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["DateTime"]; exists {
+		if err = json.Unmarshal(value, &decoded.DateTime); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["DateTimeLocalOffset"]; exists {
+		if err = json.Unmarshal(value, &decoded.DateTimeLocalOffset); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["DaylightSavingTime"]; exists {
+		if err = json.Unmarshal(value, &decoded.DaylightSavingTime); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["DedicatedNetworkPorts"]; exists {
+		if err = json.Unmarshal(value, &decoded.DedicatedNetworkPorts); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Description"]; exists {
+		if err = json.Unmarshal(value, &decoded.Description); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["EthernetInterfaces"]; exists {
+		if err = json.Unmarshal(value, &decoded.EthernetInterfaces); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["FirmwareVersion"]; exists {
+		if err = json.Unmarshal(value, &decoded.FirmwareVersion); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["GraphicalConsole"]; exists {
+		if err = json.Unmarshal(value, &decoded.GraphicalConsole); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["HostInterfaces"]; exists {
+		if err = json.Unmarshal(value, &decoded.HostInterfaces); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Id"]; exists {
+		if err = json.Unmarshal(value, &decoded.Id); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["LastResetTime"]; exists {
+		if err = json.Unmarshal(value, &decoded.LastResetTime); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Links"]; exists {
+		if err = json.Unmarshal(value, &decoded.Links); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Location"]; exists {
+		if err = json.Unmarshal(value, &decoded.Location); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["LocationIndicatorActive"]; exists {
+		if err = json.Unmarshal(value, &decoded.LocationIndicatorActive); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["LogServices"]; exists {
+		if err = json.Unmarshal(value, &decoded.LogServices); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ManagerDiagnosticData"]; exists {
+		if err = json.Unmarshal(value, &decoded.ManagerDiagnosticData); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ManagerType"]; exists {
+		if err = json.Unmarshal(value, &decoded.ManagerType); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Manufacturer"]; exists {
+		if err = json.Unmarshal(value, &decoded.Manufacturer); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Measurements"]; exists {
+		if err = json.Unmarshal(value, &decoded.Measurements); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Model"]; exists {
+		if err = json.Unmarshal(value, &decoded.Model); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Name"]; exists {
+		if err = json.Unmarshal(value, &decoded.Name); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["NetworkProtocol"]; exists {
+		if err = json.Unmarshal(value, &decoded.NetworkProtocol); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Oem"]; exists {
+		if err = json.Unmarshal(value, &decoded.Oem); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PartNumber"]; exists {
+		if err = json.Unmarshal(value, &decoded.PartNumber); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["PowerState"]; exists {
+		if err = json.Unmarshal(value, &decoded.PowerState); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Redundancy"]; exists {
+		if err = json.Unmarshal(value, &decoded.Redundancy); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Redundancy@odata.count"]; exists {
+		if err = json.Unmarshal(value, &decoded.RedundancyodataCount); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["RemoteAccountService"]; exists {
+		if err = json.Unmarshal(value, &decoded.RemoteAccountService); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["RemoteRedfishServiceUri"]; exists {
+		if err = json.Unmarshal(value, &decoded.RemoteRedfishServiceUri); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SecurityPolicy"]; exists {
+		if err = json.Unmarshal(value, &decoded.SecurityPolicy); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SerialConsole"]; exists {
+		if err = json.Unmarshal(value, &decoded.SerialConsole); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SerialInterfaces"]; exists {
+		if err = json.Unmarshal(value, &decoded.SerialInterfaces); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SerialNumber"]; exists {
+		if err = json.Unmarshal(value, &decoded.SerialNumber); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ServiceEntryPointUUID"]; exists {
+		if err = json.Unmarshal(value, &decoded.ServiceEntryPointUUID); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["ServiceIdentification"]; exists {
+		if err = json.Unmarshal(value, &decoded.ServiceIdentification); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SharedNetworkPorts"]; exists {
+		if err = json.Unmarshal(value, &decoded.SharedNetworkPorts); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["SparePartNumber"]; exists {
+		if err = json.Unmarshal(value, &decoded.SparePartNumber); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Status"]; exists {
+		if err = json.Unmarshal(value, &decoded.Status); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["TimeZoneName"]; exists {
+		if err = json.Unmarshal(value, &decoded.TimeZoneName); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["USBPorts"]; exists {
+		if err = json.Unmarshal(value, &decoded.USBPorts); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["UUID"]; exists {
+		if err = json.Unmarshal(value, &decoded.UUID); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["Version"]; exists {
+		if err = json.Unmarshal(value, &decoded.Version); err != nil {
+			return err
+		}
+	}
+	if value, exists := allProperties["VirtualMedia"]; exists {
+		if err = json.Unmarshal(value, &decoded.VirtualMedia); err != nil {
+			return err
+		}
+	}
+
+	*o = decoded
+
+	return nil
+}
+
+// AssertManagerV1190ManagerRequired checks complex required fields (models, arrays, maps) and embedded parents.
+// Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
+func AssertManagerV1190ManagerRequired(obj ManagerV1190Manager) error {
 	if err := AssertManagerV1190ActionsRequired(obj.Actions); err != nil {
 		return err
 	}
