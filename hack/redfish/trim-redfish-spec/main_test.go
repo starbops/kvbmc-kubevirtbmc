@@ -191,7 +191,7 @@ func TestRun_AgainstVendoredSpec(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open allowlist: %v", err)
 	}
-	defer allowFile.Close()
+	defer allowFile.Close() //nolint:errcheck
 	allow, err := parseAllowlist(allowFile)
 	if err != nil {
 		t.Fatalf("parse allowlist: %v", err)
@@ -201,7 +201,7 @@ func TestRun_AgainstVendoredSpec(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open trimmed spec: %v", err)
 	}
-	defer trimmed.Close()
+	defer trimmed.Close() //nolint:errcheck
 	var doc yaml.Node
 	if err := yaml.NewDecoder(trimmed).Decode(&doc); err != nil {
 		t.Fatalf("parse trimmed spec: %v", err)

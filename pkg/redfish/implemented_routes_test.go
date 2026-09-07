@@ -74,7 +74,7 @@ func readAllowlist(t *testing.T, path string) (map[string]bool, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer f.Close() //nolint:errcheck
 
 	allowed := make(map[string]bool)
 	scanner := bufio.NewScanner(f)

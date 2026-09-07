@@ -46,7 +46,7 @@ func main() {
 
 func run(path string) error {
 	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, path, nil, 0)
+	f, err := parser.ParseFile(fset, path, nil, parser.ParseComments)
 	if err != nil {
 		return fmt.Errorf("parse %s: %w", path, err)
 	}
@@ -69,7 +69,7 @@ func run(path string) error {
 	if err != nil {
 		return fmt.Errorf("create %s: %w", path, err)
 	}
-	defer out.Close()
+	defer out.Close() //nolint:errcheck
 
 	if err := format.Node(out, fset, f); err != nil {
 		return fmt.Errorf("write %s: %w", path, err)

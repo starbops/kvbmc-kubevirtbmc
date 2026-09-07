@@ -65,7 +65,7 @@ func run(inputPath, allowlistPath, outputPath string) error {
 	if err != nil {
 		return fmt.Errorf("open allowlist: %w", err)
 	}
-	defer allowFile.Close()
+	defer allowFile.Close() //nolint:errcheck
 
 	allow, err := parseAllowlist(allowFile)
 	if err != nil {
@@ -80,7 +80,7 @@ func run(inputPath, allowlistPath, outputPath string) error {
 	if err != nil {
 		return fmt.Errorf("open spec: %w", err)
 	}
-	defer specFile.Close()
+	defer specFile.Close() //nolint:errcheck
 
 	var doc yaml.Node
 	if err := yaml.NewDecoder(specFile).Decode(&doc); err != nil {
@@ -103,7 +103,7 @@ func run(inputPath, allowlistPath, outputPath string) error {
 
 	if missing := unmatched(allow, matched); len(missing) > 0 {
 		var b strings.Builder
-		b.WriteString(fmt.Sprintf("%d allowlisted operation(s) not found in %s (renamed or removed upstream?):\n", len(missing), inputPath))
+		fmt.Fprintf(&b, "%d allowlisted operation(s) not found in %s (renamed or removed upstream?):\n", len(missing), inputPath)
 		for _, k := range missing {
 			fmt.Fprintf(&b, "  - %s %s\n", k.Method, k.Path)
 		}
@@ -114,7 +114,7 @@ func run(inputPath, allowlistPath, outputPath string) error {
 	if err != nil {
 		return fmt.Errorf("create output: %w", err)
 	}
-	defer outFile.Close()
+	defer outFile.Close() //nolint:errcheck
 
 	enc := yaml.NewEncoder(outFile)
 	enc.SetIndent(2)

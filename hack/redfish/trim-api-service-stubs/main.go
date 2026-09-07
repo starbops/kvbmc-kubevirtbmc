@@ -59,7 +59,7 @@ func run(path string) error {
 	if err != nil {
 		return fmt.Errorf("create %s: %w", path, err)
 	}
-	defer out.Close()
+	defer out.Close() //nolint:errcheck
 
 	if err := writeFile(out, fset, f); err != nil {
 		return fmt.Errorf("write %s: %w", path, err)
