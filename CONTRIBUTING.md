@@ -101,11 +101,16 @@ make manifests generate generate-kubevirt-crd
 
 The CI pipeline verifies that generated files are committed and up-to-date. Always run this before opening a PR if you changed any API types.
 
-Implementing a new Redfish endpoint (`pkg/redfish/api_service.go`) also falls under `make generate`: it regenerates `pkg/redfish/implemented_routes_gen.go`, the route set the agent registers. Without it the new endpoint answers 404, and the CI freshness check fails on the dirty tree.
+#### Adding a Redfish Endpoint
 
-If the endpoint doesn't exist under `pkg/generated/redfish/` yet, generate its interface first: add its `METHOD /path` to `hack/redfish/spec/implemented-operations.yaml`, then run `make generate-redfish-api` (requires `openapi-generator` and `goimports`; see `hack/redfish/generate.sh`). That file is an allowlist — `hack/redfish/trim-redfish-spec` drops every operation not listed in it before `openapi-generator` runs, so an endpoint missing from the allowlist is never generated at all, regardless of whether you implement it in `api_service.go`. `go test ./hack/redfish/trim-redfish-spec/...` fails loudly if the allowlist and the vendored spec disagree.
+`hack/redfish/generate.sh` trims the vendored DMTF spec down to just the operations KubeVirtBMC implements before generating code — everything else is dropped on purpose, to keep the generated surface (and its test-coverage denominator) proportional to what's real. To add an endpoint:
 
-`pkg/redfish/api_service.go` is hand-maintained and never regenerated — `make generate-redfish-api` only touches `pkg/generated/redfish/`. After adding an operation to the allowlist and regenerating, write its method on `APIService` by hand, matching the signature `pkg/generated/redfish/server/api.go` now declares for it; there's no pre-existing 501 stub to fill in anymore (`hack/redfish/trim-api-service-stubs` removed the ~4,000 that didn't have a real implementation, since most referenced model types the trimmed spec no longer generates). `go test ./pkg/redfish/...` fails (`TestImplementedMethodsMatchAllowlist`) if a route you implement isn't in the allowlist too.
+1. Add its `METHOD /path` to `hack/redfish/spec/implemented-operations.yaml`.
+2. Run `make generate-redfish-api` (requires `openapi-generator` + `goimports`) to generate its interface and models under `pkg/generated/redfish/`.
+3. Write the method on `APIService` in `pkg/redfish/api_service.go` by hand, matching the signature `pkg/generated/redfish/server/api.go` now declares — there's no pre-existing stub to fill in, so check `git diff` there for the exact signature.
+4. Run `make generate` (regenerates `pkg/redfish/implemented_routes_gen.go`, the route set the agent actually registers). Skipping this means the endpoint answers 404 and CI's freshness check fails.
+
+`go test ./...` catches drift in both directions: `hack/redfish/trim-redfish-spec`'s tests fail if the allowlist and vendored spec disagree, and `pkg/redfish`'s `TestImplementedMethodsMatchAllowlist` fails if what you implemented and the allowlist disagree.
 
 #### Formatting and Vetting
 
