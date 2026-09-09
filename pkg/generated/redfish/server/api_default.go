@@ -19,19 +19,23 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// DefaultAPIController binds http requests to an api service and writes the service results to the http response
 type DefaultAPIController struct {
 	service      DefaultAPIServicer
 	errorHandler ErrorHandler
 }
 
+// DefaultAPIOption for how the controller is set up.
 type DefaultAPIOption func(*DefaultAPIController)
 
+// WithDefaultAPIErrorHandler inject ErrorHandler into controller
 func WithDefaultAPIErrorHandler(h ErrorHandler) DefaultAPIOption {
 	return func(c *DefaultAPIController) {
 		c.errorHandler = h
 	}
 }
 
+// NewDefaultAPIController creates a default api controller
 func NewDefaultAPIController(s DefaultAPIServicer, opts ...DefaultAPIOption) *DefaultAPIController {
 	controller := &DefaultAPIController{
 		service:      s,
@@ -45,6 +49,7 @@ func NewDefaultAPIController(s DefaultAPIServicer, opts ...DefaultAPIOption) *De
 	return controller
 }
 
+// Routes returns all the api routes for the DefaultAPIController
 func (c *DefaultAPIController) Routes() Routes {
 	return Routes{
 		"RedfishV1Get": Route{
@@ -158,6 +163,7 @@ func (c *DefaultAPIController) Routes() Routes {
 	}
 }
 
+// OrderedRoutes returns all the api routes in a deterministic order for the DefaultAPIController
 func (c *DefaultAPIController) OrderedRoutes() []Route {
 	return []Route{
 		Route{
@@ -271,39 +277,43 @@ func (c *DefaultAPIController) OrderedRoutes() []Route {
 	}
 }
 
+// RedfishV1Get -
 func (c *DefaultAPIController) RedfishV1Get(w http.ResponseWriter, r *http.Request) {
 	result, err := c.service.RedfishV1Get(r.Context())
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1Get_0 -
 func (c *DefaultAPIController) RedfishV1Get_0(w http.ResponseWriter, r *http.Request) {
 	result, err := c.service.RedfishV1Get_0(r.Context())
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1ManagersGet -
 func (c *DefaultAPIController) RedfishV1ManagersGet(w http.ResponseWriter, r *http.Request) {
 	result, err := c.service.RedfishV1ManagersGet(r.Context())
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1ManagersManagerIdGet -
 func (c *DefaultAPIController) RedfishV1ManagersManagerIdGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	managerIdParam := params["ManagerId"]
@@ -312,15 +322,16 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdGet(w http.ResponseWrit
 		return
 	}
 	result, err := c.service.RedfishV1ManagersManagerIdGet(r.Context(), managerIdParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1ManagersManagerIdActionsManagerResetPost -
 func (c *DefaultAPIController) RedfishV1ManagersManagerIdActionsManagerResetPost(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	managerIdParam := params["ManagerId"]
@@ -349,15 +360,17 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdActionsManagerResetPost
 		return
 	}
 	result, err := c.service.RedfishV1ManagersManagerIdActionsManagerResetPost(r.Context(), managerIdParam, managerV1190ResetRequestBodyParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1ManagersManagerIdVirtualMediaGet -
+// Deprecated
 func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	managerIdParam := params["ManagerId"]
@@ -366,15 +379,17 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaGet(w http.
 		return
 	}
 	result, err := c.service.RedfishV1ManagersManagerIdVirtualMediaGet(r.Context(), managerIdParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdGet -
+// Deprecated
 func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	managerIdParam := params["ManagerId"]
@@ -388,15 +403,17 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMedi
 		return
 	}
 	result, err := c.service.RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdGet(r.Context(), managerIdParam, virtualMediaIdParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdActionsVirtualMediaEjectMediaPost -
+// Deprecated
 func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdActionsVirtualMediaEjectMediaPost(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	managerIdParam := params["ManagerId"]
@@ -422,15 +439,17 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMedi
 		return
 	}
 	result, err := c.service.RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdActionsVirtualMediaEjectMediaPost(r.Context(), managerIdParam, virtualMediaIdParam, bodyParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdActionsVirtualMediaInsertMediaPost -
+// Deprecated
 func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdActionsVirtualMediaInsertMediaPost(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	managerIdParam := params["ManagerId"]
@@ -464,15 +483,16 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMedi
 		return
 	}
 	result, err := c.service.RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdActionsVirtualMediaInsertMediaPost(r.Context(), managerIdParam, virtualMediaIdParam, virtualMediaV163InsertMediaRequestBodyParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SessionServiceSessionsPost -
 func (c *DefaultAPIController) RedfishV1SessionServiceSessionsPost(w http.ResponseWriter, r *http.Request) {
 	var sessionV171SessionParam SessionV171Session
 	d := json.NewDecoder(r.Body)
@@ -495,15 +515,16 @@ func (c *DefaultAPIController) RedfishV1SessionServiceSessionsPost(w http.Respon
 		return
 	}
 	result, err := c.service.RedfishV1SessionServiceSessionsPost(r.Context(), sessionV171SessionParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SessionServiceSessionsSessionIdGet -
 func (c *DefaultAPIController) RedfishV1SessionServiceSessionsSessionIdGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionIdParam := params["SessionId"]
@@ -512,15 +533,16 @@ func (c *DefaultAPIController) RedfishV1SessionServiceSessionsSessionIdGet(w htt
 		return
 	}
 	result, err := c.service.RedfishV1SessionServiceSessionsSessionIdGet(r.Context(), sessionIdParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SessionServiceSessionsSessionIdDelete -
 func (c *DefaultAPIController) RedfishV1SessionServiceSessionsSessionIdDelete(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	sessionIdParam := params["SessionId"]
@@ -529,26 +551,28 @@ func (c *DefaultAPIController) RedfishV1SessionServiceSessionsSessionIdDelete(w 
 		return
 	}
 	result, err := c.service.RedfishV1SessionServiceSessionsSessionIdDelete(r.Context(), sessionIdParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SystemsGet -
 func (c *DefaultAPIController) RedfishV1SystemsGet(w http.ResponseWriter, r *http.Request) {
 	result, err := c.service.RedfishV1SystemsGet(r.Context())
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SystemsComputerSystemIdGet -
 func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	computerSystemIdParam := params["ComputerSystemId"]
@@ -557,15 +581,16 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdGet(w http.Respon
 		return
 	}
 	result, err := c.service.RedfishV1SystemsComputerSystemIdGet(r.Context(), computerSystemIdParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SystemsComputerSystemIdPatch -
 func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdPatch(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	computerSystemIdParam := params["ComputerSystemId"]
@@ -591,15 +616,16 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdPatch(w http.Resp
 		return
 	}
 	result, err := c.service.RedfishV1SystemsComputerSystemIdPatch(r.Context(), computerSystemIdParam, computerSystemV1220ComputerSystemParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SystemsComputerSystemIdActionsComputerSystemResetPost -
 func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdActionsComputerSystemResetPost(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	computerSystemIdParam := params["ComputerSystemId"]
@@ -628,15 +654,16 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdActionsComputerSy
 		return
 	}
 	result, err := c.service.RedfishV1SystemsComputerSystemIdActionsComputerSystemResetPost(r.Context(), computerSystemIdParam, computerSystemV1220ResetRequestBodyParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SystemsComputerSystemIdActionsComputerSystemSetDefaultBootOrderPost -
 func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdActionsComputerSystemSetDefaultBootOrderPost(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	computerSystemIdParam := params["ComputerSystemId"]
@@ -657,15 +684,16 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdActionsComputerSy
 		return
 	}
 	result, err := c.service.RedfishV1SystemsComputerSystemIdActionsComputerSystemSetDefaultBootOrderPost(r.Context(), computerSystemIdParam, bodyParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
 
+// RedfishV1SystemsComputerSystemIdOperatingSystemGet -
 func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdOperatingSystemGet(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	computerSystemIdParam := params["ComputerSystemId"]
@@ -674,11 +702,11 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdOperatingSystemGe
 		return
 	}
 	result, err := c.service.RedfishV1SystemsComputerSystemIdOperatingSystemGet(r.Context(), computerSystemIdParam)
-
+	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
 		return
 	}
-
+	// If no error, encode the body and the result code
 	_ = EncodeJSONResponse(result.Body, &result.Code, w)
 }
