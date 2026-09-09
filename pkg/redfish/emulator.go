@@ -24,13 +24,22 @@ type Emulator struct {
 	server *http.Server
 }
 
-func NewEmulator(ctx context.Context, port int, bmcUser string, bmcPassword string, resourceManager resourcemanager.ResourceManager) *Emulator {
+// newRouter builds the full Redfish route table: implemented routes only,
+// the session-creation response fixed up to match the Redfish spec, and
+// authentication required on everything but the public routes.
+func newRouter(bmcUser, bmcPassword string, resourceManager resourcemanager.ResourceManager) http.Handler {
 	apiService := NewAPIService(bmcUser, bmcPassword, resourceManager)
 	apiController := server.NewDefaultAPIController(apiService, server.WithDefaultAPIErrorHandler(recordingErrorHandler))
-	router := server.NewRouter(authFilter{
-		inner:      routeFilter{apiController},
+	return server.NewRouter(authFilter{
+		inner: sessionTokenFilter{
+			inner: routeFilter{apiController},
+		},
 		middleware: session.AuthMiddleware(bmcUser, bmcPassword),
 	})
+}
+
+func NewEmulator(ctx context.Context, port int, bmcUser string, bmcPassword string, resourceManager resourcemanager.ResourceManager) *Emulator {
+	router := newRouter(bmcUser, bmcPassword, resourceManager)
 
 	// Mount /healthz outside the access-log wrapper so readiness probes stay silent.
 	root := http.NewServeMux()
