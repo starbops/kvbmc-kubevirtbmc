@@ -55,3 +55,12 @@ _JAVA_OPTIONS="-DmaxYamlCodePoints=99999999" GO_POST_PROCESS_FILE="goimports -w"
 go run ./hack/redfish/relax-patch-assertions \
     -file ./pkg/generated/redfish/server/api_default.go
 goimports -w ./pkg/generated/redfish/server/api_default.go
+
+# Every Redfish resource model requires "Id" and "Name" in its generated
+# UnmarshalJSON, correct for a GET response but wrong for any request body a
+# client sends: both fields are always server-assigned. Regenerates every
+# run for the same reason as the assertion above. See
+# relax-identity-required-fields for why.
+go run ./hack/redfish/relax-identity-required-fields \
+    -dir ./pkg/generated/redfish/server
+goimports -w ./pkg/generated/redfish/server

@@ -53,9 +53,7 @@ type ManagerCollectionManagerCollection struct {
 func (o *ManagerCollectionManagerCollection) UnmarshalJSON(data []byte) (err error) {
 	// Presence is checked against required fields that exist on this struct,
 	// including fields promoted from embedded allOf parents.
-	requiredProperties := []string{
-		"Name",
-	}
+	requiredProperties := []string{}
 
 	requiredNullableProperties := map[string]bool{
 		"Name": false,

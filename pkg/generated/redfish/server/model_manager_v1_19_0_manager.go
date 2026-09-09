@@ -155,10 +155,7 @@ type ManagerV1190Manager struct {
 func (o *ManagerV1190Manager) UnmarshalJSON(data []byte) (err error) {
 	// Presence is checked against required fields that exist on this struct,
 	// including fields promoted from embedded allOf parents.
-	requiredProperties := []string{
-		"Id",
-		"Name",
-	}
+	requiredProperties := []string{}
 
 	requiredNullableProperties := map[string]bool{
 		"Id":   false,

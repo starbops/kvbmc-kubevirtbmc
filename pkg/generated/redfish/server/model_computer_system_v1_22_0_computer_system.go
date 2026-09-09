@@ -196,10 +196,7 @@ type ComputerSystemV1220ComputerSystem struct {
 func (o *ComputerSystemV1220ComputerSystem) UnmarshalJSON(data []byte) (err error) {
 	// Presence is checked against required fields that exist on this struct,
 	// including fields promoted from embedded allOf parents.
-	requiredProperties := []string{
-		"Id",
-		"Name",
-	}
+	requiredProperties := []string{}
 
 	requiredNullableProperties := map[string]bool{
 		"Id":   false,

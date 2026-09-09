@@ -127,9 +127,8 @@ func (o *ServiceRootV1161ServiceRoot) UnmarshalJSON(data []byte) (err error) {
 	// Presence is checked against required fields that exist on this struct,
 	// including fields promoted from embedded allOf parents.
 	requiredProperties := []string{
-		"Id",
+
 		"Links",
-		"Name",
 	}
 
 	requiredNullableProperties := map[string]bool{
