@@ -184,12 +184,15 @@ func (s *APIService) RedfishV1SessionServiceSessionsPost(ctx context.Context, se
 		}), err
 	}
 
+	location := fmt.Sprintf("/redfish/v1/SessionService/Sessions/%s", id)
+	AddResponseHeader(ctx, "X-Auth-Token", token)
+	AddResponseHeader(ctx, "Location", location)
+
 	return server.Response(201, server.SessionV171Session{
 		OdataType: "Session.v1_7_1.Session",
-		OdataId:   "/redfish/v1/SessionService/Sessions/1",
+		OdataId:   location,
 		Id:        id,
 		Name:      "User Session",
-		Token:     &token, // The final response will not contain this field. It's just a means to pass the token to the caller.
 		UserName:  username,
 	}), nil
 }
@@ -236,6 +239,29 @@ func (s *APIService) RedfishV1SystemsComputerSystemIdGet(ctx context.Context, co
 	if err != nil {
 		return server.Response(http.StatusInternalServerError, nil), err
 	}
+
+	// ResetType@Redfish.AllowableValues (kubevirtbmc#204: clients need this
+	// to distinguish graceful from force operations) doesn't consistently
+	// round-trip into the generated ComputerSystemV1220Reset model -- see
+	// AddResponseHeader's doc comment. Advertised here instead, from
+	// KubeVirtBMC's own fixed list of supported reset types.
+	PatchResponseBody(ctx, func(body map[string]any) {
+		actions, ok := body["Actions"].(map[string]any)
+		if !ok {
+			return
+		}
+		reset, ok := actions["#ComputerSystem.Reset"].(map[string]any)
+		if !ok {
+			return
+		}
+		reset["ResetType@Redfish.AllowableValues"] = []server.ResourceResetType{
+			server.RESOURCERESETTYPE_ON,
+			server.RESOURCERESETTYPE_FORCE_OFF,
+			server.RESOURCERESETTYPE_GRACEFUL_SHUTDOWN,
+			server.RESOURCERESETTYPE_GRACEFUL_RESTART,
+			server.RESOURCERESETTYPE_FORCE_RESTART,
+		}
+	})
 
 	return server.Response(200, computerSystem), nil
 }

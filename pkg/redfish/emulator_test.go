@@ -3,9 +3,13 @@ package redfish
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
+	"go.uber.org/mock/gomock"
+
 	"kubevirt.io/kubevirtbmc/pkg/generated/redfish/server"
+	"kubevirt.io/kubevirtbmc/pkg/resourcemanager"
 )
 
 // fakeRouter is a minimal server.Router test double built from a fixed set
@@ -107,5 +111,75 @@ func TestAuthFilter(t *testing.T) {
 				t.Errorf("status = %d, want %d (handler must still run)", rec.Code, http.StatusOK)
 			}
 		})
+	}
+}
+
+// TestSessionCreate_EndToEnd drives the exact request from
+// kubevirtbmc#297's regression report through the real router
+// (routeFilter, enrichmentFilter, authFilter, and the real
+// APIService.RedfishV1SessionServiceSessionsPost), the same way the curl
+// reproduction did:
+//
+//	curl -u admin:supersecret -X POST .../redfish/v1/SessionService/Sessions \
+//	    -d '{"UserName": "admin", "Password": "supersecret"}'
+func TestSessionCreate_EndToEnd(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	mockRM := resourcemanager.NewMockResourceManager(ctl)
+
+	router := newRouter(testUsername, testPassword, mockRM)
+
+	req := httptest.NewRequest(
+		"POST", "/redfish/v1/SessionService/Sessions",
+		strings.NewReader(`{"UserName": "admin", "Password": "admin123"}`),
+	)
+	req.SetBasicAuth(testUsername, testPassword)
+	rec := httptest.NewRecorder()
+	router.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("status = %d, want %d; body: %s", rec.Code, http.StatusCreated, rec.Body.String())
+	}
+	if got := rec.Header().Get("X-Auth-Token"); got == "" {
+		t.Error("X-Auth-Token header is missing")
+	}
+	if got := rec.Header().Get("Location"); got == "" {
+		t.Error("Location header is missing")
+	}
+	if strings.Contains(rec.Body.String(), "Token") {
+		t.Errorf("response body still contains the session token: %s", rec.Body.String())
+	}
+}
+
+// TestComputerSystemGet_EndToEnd drives GET /redfish/v1/Systems/1 through
+// the full router, the same request the e2e regression test "should
+// advertise supported reset action values" (kubevirtbmc#204) makes.
+func TestComputerSystemGet_EndToEnd(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+	mockRM := resourcemanager.NewMockResourceManager(ctl)
+	mockRM.EXPECT().
+		GetComputerSystem(gomock.Any()).
+		Return(resourcemanager.NewComputerSystem("1", "default/testvm", server.RESOURCEPOWERSTATE_ON), nil)
+	mockRM.EXPECT().GetBootFlags(gomock.Any()).Return(nil, nil)
+
+	router := newRouter(testUsername, testPassword, mockRM)
+
+	req := httptest.NewRequest("GET", "/redfish/v1/Systems/1", nil)
+	req.SetBasicAuth(testUsername, testPassword)
+	rec := httptest.NewRecorder()
+	router.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, want %d; body: %s", rec.Code, http.StatusOK, rec.Body.String())
+	}
+	got := rec.Body.String()
+	if !strings.Contains(got, `"ResetType@Redfish.AllowableValues"`) {
+		t.Fatalf("missing ResetType@Redfish.AllowableValues annotation: %s", got)
+	}
+	for _, want := range []string{"On", "ForceOff", "GracefulShutdown", "GracefulRestart", "ForceRestart"} {
+		if !strings.Contains(got, `"`+want+`"`) {
+			t.Errorf("missing allowable value %q: %s", want, got)
+		}
 	}
 }

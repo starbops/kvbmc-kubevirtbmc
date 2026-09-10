@@ -25,18 +25,15 @@ type Emulator struct {
 }
 
 // newRouter builds the full Redfish route table: implemented routes only,
-// response fixups for what the generated models can't express on their
-// own (the session-creation headers, the ComputerSystem reset action's
-// allowable values), and authentication required on everything but the
-// public routes.
+// response enrichment applied for whatever a handler asked for via
+// AddResponseHeader/PatchResponseBody, and authentication required on
+// everything but the public routes.
 func newRouter(bmcUser, bmcPassword string, resourceManager resourcemanager.ResourceManager) http.Handler {
 	apiService := NewAPIService(bmcUser, bmcPassword, resourceManager)
 	apiController := server.NewDefaultAPIController(apiService, server.WithDefaultAPIErrorHandler(recordingErrorHandler))
 	return server.NewRouter(authFilter{
-		inner: sessionTokenFilter{
-			inner: computerSystemActionsFilter{
-				inner: routeFilter{apiController},
-			},
+		inner: enrichmentFilter{
+			inner: routeFilter{apiController},
 		},
 		middleware: session.AuthMiddleware(bmcUser, bmcPassword),
 	})
