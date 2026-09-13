@@ -185,10 +185,11 @@ func (s *APIService) RedfishV1SessionServiceSessionsPost(ctx context.Context, se
 	}
 
 	location := fmt.Sprintf("/redfish/v1/SessionService/Sessions/%s", id)
-	AddResponseHeader(ctx, "X-Auth-Token", token)
-	AddResponseHeader(ctx, "Location", location)
 
-	return server.Response(201, server.SessionV171Session{
+	return server.ResponseWithHeaders(201, map[string][]string{
+		"X-Auth-Token": {token},
+		"Location":     {location},
+	}, server.SessionV171Session{
 		OdataType: "Session.v1_7_1.Session",
 		OdataId:   location,
 		Id:        id,
@@ -243,7 +244,7 @@ func (s *APIService) RedfishV1SystemsComputerSystemIdGet(ctx context.Context, co
 	// ResetType@Redfish.AllowableValues (kubevirtbmc#204: clients need this
 	// to distinguish graceful from force operations) doesn't consistently
 	// round-trip into the generated ComputerSystemV1220Reset model -- see
-	// AddResponseHeader's doc comment. Advertised here instead, from
+	// PatchResponseBody's doc comment. Advertised here instead, from
 	// KubeVirtBMC's own fixed list of supported reset types.
 	PatchResponseBody(ctx, func(body map[string]any) {
 		actions, ok := body["Actions"].(map[string]any)

@@ -18,29 +18,6 @@ func enrichmentHandler(status int, body string, fn func(ctx context.Context)) ht
 	}
 }
 
-func TestEnrichmentFilter_AddResponseHeader(t *testing.T) {
-	inner := fakeRouter{
-		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: enrichmentHandler(200, `{"Id":"1"}`, func(ctx context.Context) {
-			AddResponseHeader(ctx, "X-Auth-Token", "secret-token")
-			AddResponseHeader(ctx, "Location", "/redfish/v1/SessionService/Sessions/1")
-		})},
-	}
-	f := enrichmentFilter{inner: inner}
-
-	rec := httptest.NewRecorder()
-	f.Routes()["RedfishV1Get"].HandlerFunc.ServeHTTP(rec, httptest.NewRequest("GET", "/redfish/v1", nil))
-
-	if got := rec.Header().Get("X-Auth-Token"); got != "secret-token" {
-		t.Errorf("X-Auth-Token = %q, want %q", got, "secret-token")
-	}
-	if got := rec.Header().Get("Location"); got != "/redfish/v1/SessionService/Sessions/1" {
-		t.Errorf("Location = %q, want %q", got, "/redfish/v1/SessionService/Sessions/1")
-	}
-	if rec.Body.String() != `{"Id":"1"}` {
-		t.Errorf("body = %s, want it unchanged", rec.Body.String())
-	}
-}
-
 func TestEnrichmentFilter_PatchResponseBody(t *testing.T) {
 	inner := fakeRouter{
 		{Name: "RedfishV1SystemsComputerSystemIdGet", Method: "GET", Pattern: "/redfish/v1/Systems/{ComputerSystemId}",
@@ -123,7 +100,7 @@ func TestEnrichmentFilter_PatchOnNonJSONBodyPassesThroughUnchanged(t *testing.T)
 func TestEnrichmentFilter_OrderedRoutesAlsoWraps(t *testing.T) {
 	inner := fakeRouter{
 		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: enrichmentHandler(200, `{}`, func(ctx context.Context) {
-			AddResponseHeader(ctx, "X-Test", "ordered")
+			PatchResponseBody(ctx, func(body map[string]any) { body["Ordered"] = true })
 		})},
 	}
 	f := enrichmentFilter{inner: inner}
@@ -136,15 +113,14 @@ func TestEnrichmentFilter_OrderedRoutesAlsoWraps(t *testing.T) {
 	rec := httptest.NewRecorder()
 	ordered[0].HandlerFunc.ServeHTTP(rec, httptest.NewRequest("GET", "/redfish/v1", nil))
 
-	if got := rec.Header().Get("X-Test"); got != "ordered" {
-		t.Errorf("X-Test = %q, want %q", got, "ordered")
+	if !strings.Contains(rec.Body.String(), `"Ordered":true`) {
+		t.Errorf("body = %s, want the patch applied via OrderedRoutes()", rec.Body.String())
 	}
 }
 
-func TestAddResponseHeader_NoopWithoutEnrichmentContext(t *testing.T) {
+func TestPatchResponseBody_NoopWithoutEnrichmentContext(t *testing.T) {
 	// A caller using a plain context (e.g. a unit test that doesn't go
 	// through enrichmentFilter) must not panic -- it just has nothing to
 	// collect into.
-	AddResponseHeader(context.Background(), "X-Test", "value")
 	PatchResponseBody(context.Background(), func(map[string]any) {})
 }

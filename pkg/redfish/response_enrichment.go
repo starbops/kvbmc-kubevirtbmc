@@ -9,45 +9,35 @@ import (
 	"kubevirt.io/kubevirtbmc/pkg/generated/redfish/server"
 )
 
-// Some Redfish responses need something ImplResponse has no field for: a
-// header (a session's token, its Location), or a body property a generated
-// model doesn't happen to have (an OData "@Redfish.AllowableValues"
-// annotation -- whether it does depends on what redfish.dmtf.org happens
-// to be serving the day generate.sh last ran, which has already broken
-// twice). AddResponseHeader and PatchResponseBody let an APIService method
-// ask for either, using the Go values it already has on hand, without
-// knowing or caring how the response actually gets assembled.
+// Some Redfish responses need a body property a generated model doesn't
+// happen to have (an OData "@Redfish.AllowableValues" annotation -- whether
+// it does depends on what redfish.dmtf.org happens to be serving the day
+// generate.sh last ran, which has already broken twice). PatchResponseBody
+// lets an APIService method ask for one, using the Go values it already
+// has on hand, without knowing or caring how the response actually gets
+// assembled. (Response headers don't need this: openapi-generator's
+// addResponseHeaders option gives ImplResponse a Headers field directly --
+// see server.ResponseWithHeaders.)
 //
 // enrichmentFilter is the other half: applied once, to every route, it
-// collects whatever a handler asked for via ctx and applies it to the real
-// response afterward. A handler that calls neither helper costs it nothing
-// beyond a small buffer-and-copy. Adding a new case where a generated
-// model can't express something Redfish requires means calling one of
-// these two functions at the point that already has the data -- never a
-// new wrapper type, a new route-name constant, or another level of
-// nesting in newRouter.
+// buffers the handler's response, applies whatever patches were requested
+// via ctx, and copies both the (possibly patched) body and whatever
+// headers the handler set -- via ImplResponse.Headers or otherwise -- onto
+// the real response. A handler that calls neither PatchResponseBody nor
+// ResponseWithHeaders costs it nothing beyond a small buffer-and-copy.
 type responseEnrichmentKey struct{}
 
 type responseEnrichment struct {
-	headers http.Header
 	patches []func(body map[string]any)
-}
-
-// AddResponseHeader adds a header to the eventual HTTP response for the
-// request behind ctx. A no-op if ctx didn't come from a request routed
-// through enrichmentFilter (e.g. a unit test using context.Background()).
-func AddResponseHeader(ctx context.Context, key, value string) {
-	if e := enrichmentFrom(ctx); e != nil {
-		e.headers.Add(key, value)
-	}
 }
 
 // PatchResponseBody registers a function to mutate the response body,
 // decoded as a generic JSON object, before it's written to the client.
 // Multiple patches on the same request all run, in registration order. A
-// no-op under the same conditions as AddResponseHeader; also silently
-// skipped if the body isn't a JSON object (an error response, for
-// instance), since there's nothing to patch.
+// no-op if ctx didn't come from a request routed through enrichmentFilter
+// (e.g. a unit test using context.Background()); also silently skipped if
+// the body isn't a JSON object (an error response, for instance), since
+// there's nothing to patch.
 func PatchResponseBody(ctx context.Context, patch func(body map[string]any)) {
 	if e := enrichmentFrom(ctx); e != nil {
 		e.patches = append(e.patches, patch)
@@ -60,8 +50,8 @@ func enrichmentFrom(ctx context.Context) *responseEnrichment {
 }
 
 // enrichmentFilter applies response enrichment requested via
-// AddResponseHeader/PatchResponseBody. See the package doc comment above
-// for why this exists.
+// PatchResponseBody. See the package doc comment above for why this
+// exists.
 type enrichmentFilter struct {
 	inner server.Router
 }
@@ -87,16 +77,13 @@ func (f enrichmentFilter) OrderedRoutes() []server.Route {
 func (f enrichmentFilter) wrap(route server.Route) server.Route {
 	inner := route.HandlerFunc
 	route.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
-		enrichment := &responseEnrichment{headers: make(http.Header)}
+		enrichment := &responseEnrichment{}
 		r = r.WithContext(context.WithValue(r.Context(), responseEnrichmentKey{}, enrichment))
 
 		rec := &responseBuffer{header: make(http.Header), status: http.StatusOK}
 		inner(rec, r)
 
 		for key, values := range rec.header {
-			w.Header()[key] = values
-		}
-		for key, values := range enrichment.headers {
 			w.Header()[key] = values
 		}
 

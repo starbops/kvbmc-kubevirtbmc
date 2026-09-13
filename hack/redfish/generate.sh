@@ -52,7 +52,7 @@ _JAVA_OPTIONS="-DmaxYamlCodePoints=99999999" GO_POST_PROCESS_FILE="goimports -w"
     -g go-server \
     --package-name server \
     --enable-post-process-file \
-    -p sourceFolder=server,onlyInterfaces=true,outputAsLibrary=true,enumClassPrefix=true
+    -p sourceFolder=server,onlyInterfaces=true,outputAsLibrary=true,enumClassPrefix=true,addResponseHeaders=true
 
 # openapi-generator's go-server template asserts every field an operation's
 # schema marks "required" is present, which is wrong for PATCH: a PATCH body

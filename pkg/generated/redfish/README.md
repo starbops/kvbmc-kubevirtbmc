@@ -12,7 +12,7 @@ To see how to make this your own, look here:
 [README](https://openapi-generator.tech)
 
 - API version: 2023.3
-- Build date: 2026-09-13T17:54:20.479141+08:00[Asia/Taipei]
+- Build date: 2026-09-13T20:13:39.510804+08:00[Asia/Taipei]
 - Generator version: 7.25.0
 For more information, please visit [https://www.dmtf.org/standards/redfish](https://www.dmtf.org/standards/redfish)
 

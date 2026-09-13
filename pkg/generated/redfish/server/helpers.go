@@ -31,8 +31,18 @@ const errMsgMaxValueConstraint = "provided parameter is not respecting maximum v
 // Response return a ImplResponse struct filled
 func Response(code int, body interface{}) ImplResponse {
 	return ImplResponse{
-		Code: code,
-		Body: body,
+		Code:    code,
+		Headers: nil,
+		Body:    body,
+	}
+}
+
+// ResponseWithHeaders return a ImplResponse struct filled, including headers
+func ResponseWithHeaders(code int, headers map[string][]string, body interface{}) ImplResponse {
+	return ImplResponse{
+		Code:    code,
+		Headers: headers,
+		Body:    body,
 	}
 }
 
@@ -75,8 +85,13 @@ func AssertRecurseValueRequired[T any](value reflect.Value, callback func(T) err
 }
 
 // EncodeJSONResponse uses the json encoder to write an interface to the http response with an optional status code
-func EncodeJSONResponse(i interface{}, status *int, w http.ResponseWriter) error {
+func EncodeJSONResponse(i interface{}, status *int, headers map[string][]string, w http.ResponseWriter) error {
 	wHeader := w.Header()
+	for key, values := range headers {
+		for _, value := range values {
+			wHeader.Add(key, value)
+		}
+	}
 
 	f, ok := i.(*os.File)
 	if ok {

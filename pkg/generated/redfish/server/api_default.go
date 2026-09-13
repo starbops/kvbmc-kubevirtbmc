@@ -286,7 +286,7 @@ func (c *DefaultAPIController) RedfishV1Get(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1Get_0 -
@@ -298,7 +298,7 @@ func (c *DefaultAPIController) RedfishV1Get_0(w http.ResponseWriter, r *http.Req
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1ManagersGet -
@@ -310,7 +310,7 @@ func (c *DefaultAPIController) RedfishV1ManagersGet(w http.ResponseWriter, r *ht
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1ManagersManagerIdGet -
@@ -328,7 +328,7 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdGet(w http.ResponseWrit
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1ManagersManagerIdActionsManagerResetPost -
@@ -366,7 +366,7 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdActionsManagerResetPost
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1ManagersManagerIdVirtualMediaGet -
@@ -385,7 +385,7 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaGet(w http.
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdGet -
@@ -409,7 +409,7 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMedi
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdActionsVirtualMediaEjectMediaPost -
@@ -445,7 +445,7 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMedi
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1ManagersManagerIdVirtualMediaVirtualMediaIdActionsVirtualMediaInsertMediaPost -
@@ -489,7 +489,7 @@ func (c *DefaultAPIController) RedfishV1ManagersManagerIdVirtualMediaVirtualMedi
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SessionServiceSessionsPost -
@@ -521,7 +521,7 @@ func (c *DefaultAPIController) RedfishV1SessionServiceSessionsPost(w http.Respon
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SessionServiceSessionsSessionIdGet -
@@ -539,7 +539,7 @@ func (c *DefaultAPIController) RedfishV1SessionServiceSessionsSessionIdGet(w htt
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SessionServiceSessionsSessionIdDelete -
@@ -557,7 +557,7 @@ func (c *DefaultAPIController) RedfishV1SessionServiceSessionsSessionIdDelete(w 
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SystemsGet -
@@ -569,7 +569,7 @@ func (c *DefaultAPIController) RedfishV1SystemsGet(w http.ResponseWriter, r *htt
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SystemsComputerSystemIdGet -
@@ -587,7 +587,7 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdGet(w http.Respon
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SystemsComputerSystemIdPatch -
@@ -622,7 +622,7 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdPatch(w http.Resp
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SystemsComputerSystemIdActionsComputerSystemResetPost -
@@ -660,7 +660,7 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdActionsComputerSy
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SystemsComputerSystemIdActionsComputerSystemSetDefaultBootOrderPost -
@@ -690,7 +690,7 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdActionsComputerSy
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
 
 // RedfishV1SystemsComputerSystemIdOperatingSystemGet -
@@ -708,5 +708,5 @@ func (c *DefaultAPIController) RedfishV1SystemsComputerSystemIdOperatingSystemGe
 		return
 	}
 	// If no error, encode the body and the result code
-	_ = EncodeJSONResponse(result.Body, &result.Code, w)
+	_ = EncodeJSONResponse(result.Body, &result.Code, result.Headers, w)
 }
