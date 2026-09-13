@@ -30,9 +30,6 @@ const (
 	RESOURCERESETTYPE_SUSPEND           ResourceResetType = "Suspend"
 	RESOURCERESETTYPE_PAUSE             ResourceResetType = "Pause"
 	RESOURCERESETTYPE_RESUME            ResourceResetType = "Resume"
-	RESOURCERESETTYPE_FULL_POWER_CYCLE  ResourceResetType = "FullPowerCycle"
-	RESOURCERESETTYPE_SLEEP             ResourceResetType = "Sleep"
-	RESOURCERESETTYPE_HIBERNATE         ResourceResetType = "Hibernate"
 )
 
 // AllowedResourceResetTypeEnumValues is all the allowed values of ResourceResetType enum
@@ -49,9 +46,6 @@ var AllowedResourceResetTypeEnumValues = []ResourceResetType{
 	"Suspend",
 	"Pause",
 	"Resume",
-	"FullPowerCycle",
-	"Sleep",
-	"Hibernate",
 }
 
 // validResourceResetTypeEnumValue provides a map of ResourceResetTypes for fast verification of use input
@@ -68,9 +62,6 @@ var validResourceResetTypeEnumValues = map[ResourceResetType]struct{}{
 	"Suspend":          {},
 	"Pause":            {},
 	"Resume":           {},
-	"FullPowerCycle":   {},
-	"Sleep":            {},
-	"Hibernate":        {},
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

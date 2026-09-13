@@ -25,7 +25,14 @@ fi
 # Trim the spec down to only the operations pkg/redfish actually implements,
 # so openapi-generator doesn't generate stubs for the thousands it doesn't.
 # See hack/redfish/spec/implemented-operations.yaml.
-TRIMMED_SPEC="$(mktemp -t kubevirtbmc-redfish-openapi.XXXXXX).yaml"
+#
+# The trimmed spec has to land next to hack/redfish/spec/schemas/ (not some
+# unrelated tmpdir): the implemented operations' $refs are local relative
+# paths like "./schemas/Session.v1_7_1.yaml#/..." (see
+# vendor-redfish-schemas), resolved by openapi-generator relative to
+# whatever file it's reading -- so the trimmed copy has to keep living
+# alongside schemas/ for those to still resolve.
+TRIMMED_SPEC="./hack/redfish/spec/.trimmed.openapi.yaml"
 trap 'rm -f "$TRIMMED_SPEC"' EXIT
 go run ./hack/redfish/trim-redfish-spec \
     -input ./hack/redfish/spec/openapi.yaml \
@@ -55,12 +62,3 @@ _JAVA_OPTIONS="-DmaxYamlCodePoints=99999999" GO_POST_PROCESS_FILE="goimports -w"
 go run ./hack/redfish/relax-patch-assertions \
     -file ./pkg/generated/redfish/server/api_default.go
 goimports -w ./pkg/generated/redfish/server/api_default.go
-
-# Every Redfish resource model requires "Id" and "Name" in its generated
-# UnmarshalJSON, correct for a GET response but wrong for any request body a
-# client sends: both fields are always server-assigned. Regenerates every
-# run for the same reason as the assertion above. See
-# relax-identity-required-fields for why.
-go run ./hack/redfish/relax-identity-required-fields \
-    -dir ./pkg/generated/redfish/server
-goimports -w ./pkg/generated/redfish/server

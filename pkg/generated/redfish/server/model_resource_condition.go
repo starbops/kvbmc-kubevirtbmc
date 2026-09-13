@@ -16,10 +16,6 @@ import (
 
 // ResourceCondition - A condition that requires attention.
 type ResourceCondition struct {
-
-	// The type of condition.
-	ConditionType *string `json:"ConditionType,omitempty"`
-
 	LogEntry OdataV4IdRef `json:"LogEntry,omitempty"`
 
 	// The human-readable message for this condition.
@@ -31,27 +27,18 @@ type ResourceCondition struct {
 	// The identifier for the message.
 	MessageId string `json:"MessageId"`
 
-	// The OEM extension.
-	Oem map[string]interface{} `json:"Oem,omitempty"`
-
 	OriginOfCondition OdataV4IdRef `json:"OriginOfCondition,omitempty"`
 
 	// Suggestions on how to resolve the condition.
 	Resolution string `json:"Resolution,omitempty"`
 
 	// The list of recommended steps to resolve the condition.
-	ResolutionSteps []ResolutionStepResolutionStep `json:"ResolutionSteps,omitempty"`
+	ResolutionSteps []ResolutionStepV100ResolutionStep `json:"ResolutionSteps,omitempty"`
 
 	Severity ResourceHealth `json:"Severity,omitempty"`
 
 	// The time the condition occurred.
 	Timestamp time.Time `json:"Timestamp,omitempty"`
-
-	// The source of authentication for the username property associated with the condition.
-	UserAuthenticationSource *string `json:"UserAuthenticationSource,omitempty"`
-
-	// The username of the account associated with the condition.
-	Username *string `json:"Username,omitempty"`
 }
 
 // AssertResourceConditionRequired checks complex required fields (models, arrays, maps) and embedded parents.
@@ -64,7 +51,7 @@ func AssertResourceConditionRequired(obj ResourceCondition) error {
 		return err
 	}
 	for _, el := range obj.ResolutionSteps {
-		if err := AssertResolutionStepResolutionStepRequired(el); err != nil {
+		if err := AssertResolutionStepV100ResolutionStepRequired(el); err != nil {
 			return err
 		}
 	}
@@ -80,7 +67,7 @@ func AssertResourceConditionConstraints(obj ResourceCondition) error {
 		return err
 	}
 	for _, el := range obj.ResolutionSteps {
-		if err := AssertResolutionStepResolutionStepConstraints(el); err != nil {
+		if err := AssertResolutionStepV100ResolutionStepConstraints(el); err != nil {
 			return err
 		}
 	}

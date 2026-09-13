@@ -97,13 +97,26 @@ generate-kubevirt-crd: controller-gen ## Clone KubeVirt API and generate CustomR
 generate-mock: mockgen ## Generate mocks for interfaces.
 	$(MOCKGEN) -source=pkg/resourcemanager/resourcemanager.go -destination=pkg/resourcemanager/mock_resourcemanager.go -package=resourcemanager
 
-REDFISH_SCHEMA_BUNDLE ?= DSP8010_2024.3
+# Keep in sync with hack/redfish/spec/openapi.yaml's own vendored version
+# (its `info.version`) and hack/redfish/spec/schemas/ -- vendor-redfish-schema
+# pulls from whatever bundle this points at, so bumping it is how you'd pick
+# up a newer DMTF schema release.
+REDFISH_SCHEMA_BUNDLE ?= DSP8010_2023.3
 .PHONY: download-redfish-schema
-download-schema: ## Download the Redfish schema.
+download-redfish-schema: ## Download and extract the Redfish DSP8010 schema bundle used by vendor-redfish-schema.
 	test -d ./hack/$(REDFISH_SCHEMA_BUNDLE) || \
-	( curl -sSL https://www.dmtf.org/sites/default/files/standards/documents/$(REDFISH_SCHEMA_BUNDLE).zip -o ./hack/$(REDFISH_SCHEMA_BUNDLE).zip && \
-	unzip -q -d ./hack/ ./hack/$(REDFISH_SCHEMA_BUNDLE).zip && \
+	( curl -sSL -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36" https://www.dmtf.org/sites/default/files/standards/documents/$(REDFISH_SCHEMA_BUNDLE).zip -o ./hack/$(REDFISH_SCHEMA_BUNDLE).zip && \
+	mkdir -p ./hack/$(REDFISH_SCHEMA_BUNDLE) && \
+	unzip -q -d ./hack/$(REDFISH_SCHEMA_BUNDLE) ./hack/$(REDFISH_SCHEMA_BUNDLE).zip && \
 	rm -f ./hack/$(REDFISH_SCHEMA_BUNDLE).zip )
+
+.PHONY: vendor-redfish-schema
+vendor-redfish-schema: download-redfish-schema ## Vendor the DMTF schema files reachable from implemented-operations.yaml into hack/redfish/spec/schemas/, retiring the live $ref fetch. Run after adding an implemented-operations.yaml entry or bumping REDFISH_SCHEMA_BUNDLE; commit the result.
+	go run ./hack/redfish/vendor-redfish-schemas \
+		-spec ./hack/redfish/spec/openapi.yaml \
+		-allowlist ./hack/redfish/spec/implemented-operations.yaml \
+		-bundle "$$(find ./hack/$(REDFISH_SCHEMA_BUNDLE) -type d -name openapi | head -1)" \
+		-schemas-dir ./hack/redfish/spec/schemas
 
 .PHONY: generate-redfish-api
 generate-redfish-api: ## Generate Redfish API server.

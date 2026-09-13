@@ -26,7 +26,8 @@ type ComputerSystemV1220WatchdogTimer struct {
 
 	Status ResourceStatus `json:"Status,omitempty"`
 
-	TimeoutAction ComputerSystemV1220WatchdogTimeoutActions `json:"TimeoutAction"`
+	// The action to perform when the watchdog timer reaches its timeout value.
+	TimeoutAction *ComputerSystemV1220WatchdogTimeoutActions `json:"TimeoutAction"`
 
 	WarningAction ComputerSystemV1220WatchdogWarningActions `json:"WarningAction,omitempty"`
 }
@@ -42,7 +43,7 @@ func (o *ComputerSystemV1220WatchdogTimer) UnmarshalJSON(data []byte) (err error
 
 	requiredNullableProperties := map[string]bool{
 		"FunctionEnabled": true,
-		"TimeoutAction":   false,
+		"TimeoutAction":   true,
 	}
 
 	allowedJsonKeys := map[string]struct{}{

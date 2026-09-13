@@ -23,8 +23,6 @@ const (
 	RESOURCEPOWERSTATE_POWERING_ON  ResourcePowerState = "PoweringOn"
 	RESOURCEPOWERSTATE_POWERING_OFF ResourcePowerState = "PoweringOff"
 	RESOURCEPOWERSTATE_PAUSED       ResourcePowerState = "Paused"
-	RESOURCEPOWERSTATE_SLEEPING     ResourcePowerState = "Sleeping"
-	RESOURCEPOWERSTATE_HIBERNATING  ResourcePowerState = "Hibernating"
 )
 
 // AllowedResourcePowerStateEnumValues is all the allowed values of ResourcePowerState enum
@@ -34,8 +32,6 @@ var AllowedResourcePowerStateEnumValues = []ResourcePowerState{
 	"PoweringOn",
 	"PoweringOff",
 	"Paused",
-	"Sleeping",
-	"Hibernating",
 }
 
 // validResourcePowerStateEnumValue provides a map of ResourcePowerStates for fast verification of use input
@@ -45,8 +41,6 @@ var validResourcePowerStateEnumValues = map[ResourcePowerState]struct{}{
 	"PoweringOn":  {},
 	"PoweringOff": {},
 	"Paused":      {},
-	"Sleeping":    {},
-	"Hibernating": {},
 }
 
 // IsValid return true if the value is valid for the enum, false otherwise

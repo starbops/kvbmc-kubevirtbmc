@@ -10,12 +10,7 @@
 
 package server
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
-// ComputerSystemCollectionComputerSystemCollection - The collection of `ComputerSystem` resource instances.
+// ComputerSystemCollectionComputerSystemCollection - The collection of ComputerSystem resource instances.
 type ComputerSystemCollectionComputerSystemCollection struct {
 
 	// The OData description of a payload.
@@ -31,7 +26,7 @@ type ComputerSystemCollectionComputerSystemCollection struct {
 	OdataType string `json:"@odata.type"`
 
 	// The description of this resource.  Used for commonality in the schema definitions.
-	Description *string `json:"Description,omitempty"`
+	Description string `json:"Description,omitempty"`
 
 	// The members of this collection.
 	Members []OdataV4IdRef `json:"Members"`
@@ -47,111 +42,6 @@ type ComputerSystemCollectionComputerSystemCollection struct {
 
 	// The OEM extension.
 	Oem map[string]interface{} `json:"Oem,omitempty"`
-}
-
-// UnmarshalJSON validates required property keys then unmarshals into ComputerSystemCollectionComputerSystemCollection
-func (o *ComputerSystemCollectionComputerSystemCollection) UnmarshalJSON(data []byte) (err error) {
-	// Presence is checked against required fields that exist on this struct,
-	// including fields promoted from embedded allOf parents.
-	requiredProperties := []string{}
-
-	requiredNullableProperties := map[string]bool{
-		"Name": false,
-	}
-
-	allowedJsonKeys := map[string]struct{}{
-		"@odata.context":         {},
-		"@odata.etag":            {},
-		"@odata.id":              {},
-		"@odata.type":            {},
-		"Description":            {},
-		"Members":                {},
-		"Members@odata.count":    {},
-		"Members@odata.nextLink": {},
-		"Name":                   {},
-		"Oem":                    {},
-	}
-
-	allProperties := make(map[string]json.RawMessage)
-
-	err = json.Unmarshal(data, &allProperties)
-
-	if err != nil {
-		return err
-	}
-
-	for _, requiredProperty := range requiredProperties {
-		value, exists := allProperties[requiredProperty]
-		if !exists {
-			return &RequiredError{Field: requiredProperty}
-		}
-		if string(value) == "null" && !requiredNullableProperties[requiredProperty] {
-			return &RequiredError{Field: requiredProperty}
-		}
-	}
-
-	for key := range allProperties {
-		if _, exists := allowedJsonKeys[key]; !exists {
-			return fmt.Errorf("json: unknown field %q", key)
-		}
-	}
-
-	var decoded ComputerSystemCollectionComputerSystemCollection
-
-	if value, exists := allProperties["@odata.context"]; exists {
-		if err = json.Unmarshal(value, &decoded.OdataContext); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["@odata.etag"]; exists {
-		if err = json.Unmarshal(value, &decoded.OdataEtag); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["@odata.id"]; exists {
-		if err = json.Unmarshal(value, &decoded.OdataId); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["@odata.type"]; exists {
-		if err = json.Unmarshal(value, &decoded.OdataType); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["Description"]; exists {
-		if err = json.Unmarshal(value, &decoded.Description); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["Members"]; exists {
-		if err = json.Unmarshal(value, &decoded.Members); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["Members@odata.count"]; exists {
-		if err = json.Unmarshal(value, &decoded.MembersodataCount); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["Members@odata.nextLink"]; exists {
-		if err = json.Unmarshal(value, &decoded.MembersodataNextLink); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["Name"]; exists {
-		if err = json.Unmarshal(value, &decoded.Name); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["Oem"]; exists {
-		if err = json.Unmarshal(value, &decoded.Oem); err != nil {
-			return err
-		}
-	}
-
-	*o = decoded
-
-	return nil
 }
 
 // AssertComputerSystemCollectionComputerSystemCollectionRequired checks complex required fields (models, arrays, maps) and embedded parents.

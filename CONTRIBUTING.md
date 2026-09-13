@@ -103,14 +103,15 @@ The CI pipeline verifies that generated files are committed and up-to-date. Alwa
 
 #### Adding a Redfish Endpoint
 
-`hack/redfish/generate.sh` trims the vendored DMTF spec down to just the operations KubeVirtBMC implements before generating code — everything else is dropped on purpose, to keep the generated surface (and its test-coverage denominator) proportional to what's real. To add an endpoint:
+`hack/redfish/generate.sh` trims the vendored DMTF spec down to just the operations KubeVirtBMC implements before generating code — everything else is dropped on purpose, to keep the generated surface (and its test-coverage denominator) proportional to what's real. Every external DMTF schema an implemented operation needs is vendored locally under `hack/redfish/spec/schemas/`; generation never fetches anything over the network. To add an endpoint:
 
 1. Add its `METHOD /path` to `hack/redfish/spec/implemented-operations.yaml`.
-2. Run `make generate-redfish-api` (requires `openapi-generator` + `goimports`) to generate its interface and models under `pkg/generated/redfish/`.
-3. Write the method on `APIService` in `pkg/redfish/api_service.go` by hand, matching the signature `pkg/generated/redfish/server/api.go` now declares — there's no pre-existing stub to fill in, so check `git diff` there for the exact signature.
-4. Run `make generate` (regenerates `pkg/redfish/implemented_routes_gen.go`, the route set the agent actually registers). Skipping this means the endpoint answers 404 and CI's freshness check fails.
+2. If it references a DMTF schema not already under `hack/redfish/spec/schemas/` (generation will fail loudly with a missing-file error if so), run `make vendor-redfish-schema` to fetch and vendor it, then commit the new file(s) alongside your `implemented-operations.yaml` change.
+3. Run `make generate-redfish-api` (requires `openapi-generator` + `goimports`) to generate its interface and models under `pkg/generated/redfish/`.
+4. Write the method on `APIService` in `pkg/redfish/api_service.go` by hand, matching the signature `pkg/generated/redfish/server/api.go` now declares — there's no pre-existing stub to fill in, so check `git diff` there for the exact signature.
+5. Run `make generate` (regenerates `pkg/redfish/implemented_routes_gen.go`, the route set the agent actually registers). Skipping this means the endpoint answers 404 and CI's freshness check fails.
 
-`go test ./...` catches drift in both directions: `hack/redfish/trim-redfish-spec`'s tests fail if the allowlist and vendored spec disagree, and `pkg/redfish`'s `TestImplementedMethodsMatchAllowlist` fails if what you implemented and the allowlist disagree.
+`go test ./...` catches drift in multiple directions: `hack/redfish/trim-redfish-spec`'s tests fail if the allowlist and vendored spec disagree, `hack/redfish/vendor-redfish-schemas`' tests guard the required+readOnly `$ref`-sibling fix that keeps server-assigned fields (`Id`, `Name`) out of request-body validation, and `pkg/redfish`'s `TestImplementedMethodsMatchAllowlist` fails if what you implemented and the allowlist disagree.
 
 #### Formatting and Vetting
 

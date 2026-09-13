@@ -10,11 +10,6 @@
 
 package server
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
 // ServiceRootV1161Links - The links to other resources that are related to this resource.
 type ServiceRootV1161Links struct {
 	ManagerProvidingService OdataV4IdRef `json:"ManagerProvidingService,omitempty"`
@@ -22,90 +17,14 @@ type ServiceRootV1161Links struct {
 	// The OEM extension.
 	Oem map[string]interface{} `json:"Oem,omitempty"`
 
+	// The link to a collection of sessions.
 	Sessions OdataV4IdRef `json:"Sessions"`
-}
-
-// UnmarshalJSON validates required property keys then unmarshals into ServiceRootV1161Links
-func (o *ServiceRootV1161Links) UnmarshalJSON(data []byte) (err error) {
-	// Presence is checked against required fields that exist on this struct,
-	// including fields promoted from embedded allOf parents.
-	requiredProperties := []string{
-		"Sessions",
-	}
-
-	requiredNullableProperties := map[string]bool{
-		"Sessions": false,
-	}
-
-	allowedJsonKeys := map[string]struct{}{
-		"ManagerProvidingService": {},
-		"Oem":                     {},
-		"Sessions":                {},
-	}
-
-	allProperties := make(map[string]json.RawMessage)
-
-	err = json.Unmarshal(data, &allProperties)
-
-	if err != nil {
-		return err
-	}
-
-	for _, requiredProperty := range requiredProperties {
-		value, exists := allProperties[requiredProperty]
-		if !exists {
-			return &RequiredError{Field: requiredProperty}
-		}
-		if string(value) == "null" && !requiredNullableProperties[requiredProperty] {
-			return &RequiredError{Field: requiredProperty}
-		}
-	}
-
-	for key := range allProperties {
-		if _, exists := allowedJsonKeys[key]; !exists {
-			return fmt.Errorf("json: unknown field %q", key)
-		}
-	}
-
-	var decoded ServiceRootV1161Links
-
-	if value, exists := allProperties["ManagerProvidingService"]; exists {
-		if err = json.Unmarshal(value, &decoded.ManagerProvidingService); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["Oem"]; exists {
-		if err = json.Unmarshal(value, &decoded.Oem); err != nil {
-			return err
-		}
-	}
-	if value, exists := allProperties["Sessions"]; exists {
-		if err = json.Unmarshal(value, &decoded.Sessions); err != nil {
-			return err
-		}
-	}
-
-	*o = decoded
-
-	return nil
 }
 
 // AssertServiceRootV1161LinksRequired checks complex required fields (models, arrays, maps) and embedded parents.
 // Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertServiceRootV1161LinksRequired(obj ServiceRootV1161Links) error {
-	elements := map[string]interface{}{
-		"Sessions": obj.Sessions,
-	}
-	for name, el := range elements {
-		if isZero := IsZeroValue(el); isZero {
-			return &RequiredError{Field: name}
-		}
-	}
-
 	if err := AssertOdataV4IdRefRequired(obj.ManagerProvidingService); err != nil {
-		return err
-	}
-	if err := AssertOdataV4IdRefRequired(obj.Sessions); err != nil {
 		return err
 	}
 	return nil
@@ -114,9 +33,6 @@ func AssertServiceRootV1161LinksRequired(obj ServiceRootV1161Links) error {
 // AssertServiceRootV1161LinksConstraints checks if the values respects the defined constraints
 func AssertServiceRootV1161LinksConstraints(obj ServiceRootV1161Links) error {
 	if err := AssertOdataV4IdRefConstraints(obj.ManagerProvidingService); err != nil {
-		return err
-	}
-	if err := AssertOdataV4IdRefConstraints(obj.Sessions); err != nil {
 		return err
 	}
 	return nil

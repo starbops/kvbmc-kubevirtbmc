@@ -15,7 +15,7 @@ import (
 // bakes an "Id"/"Name" required check into every Resource-derived model's
 // UnmarshalJSON regardless of context, which used to reject both these
 // bodies with a 422 "field 'Id' is required" -- see
-// hack/redfish/relax-identity-required-fields.
+// hack/redfish/vendor-redfish-schemas.
 
 func TestSessionCreateRequestDecodesWithoutIdentityFields(t *testing.T) {
 	body := []byte(`{"UserName": "admin", "Password": "supersecret"}`)

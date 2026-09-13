@@ -64,6 +64,7 @@ type ServiceRootV1161ServiceRoot struct {
 
 	LicenseService OdataV4IdRef `json:"LicenseService,omitempty"`
 
+	// The links to other resources that are related to this resource.
 	Links ServiceRootV1161Links `json:"Links"`
 
 	Managers OdataV4IdRef `json:"Managers,omitempty"`
@@ -127,14 +128,11 @@ func (o *ServiceRootV1161ServiceRoot) UnmarshalJSON(data []byte) (err error) {
 	// Presence is checked against required fields that exist on this struct,
 	// including fields promoted from embedded allOf parents.
 	requiredProperties := []string{
-
 		"Links",
 	}
 
 	requiredNullableProperties := map[string]bool{
-		"Id":    false,
 		"Links": false,
-		"Name":  false,
 	}
 
 	allowedJsonKeys := map[string]struct{}{

@@ -14,26 +14,23 @@ package server
 type ResourceStatus struct {
 
 	// Conditions in this resource that require attention.
-	Conditions []ResourceStatusConditionsInner `json:"Conditions,omitempty"`
+	Conditions []ResourceCondition `json:"Conditions,omitempty"`
 
-	// The health state of this resource in the absence of its dependent resources.
-	Health *string `json:"Health,omitempty"`
+	Health ResourceHealth `json:"Health,omitempty"`
 
-	// The overall health state from the view of this resource.
-	HealthRollup *string `json:"HealthRollup,omitempty"`
+	HealthRollup ResourceHealth `json:"HealthRollup,omitempty"`
 
 	// The OEM extension.
 	Oem map[string]interface{} `json:"Oem,omitempty"`
 
-	// The state of the resource.
-	State *string `json:"State,omitempty"`
+	State ResourceState `json:"State,omitempty"`
 }
 
 // AssertResourceStatusRequired checks complex required fields (models, arrays, maps) and embedded parents.
 // Primitive required fields are validated for JSON request bodies in UnmarshalJSON so zero values remain valid.
 func AssertResourceStatusRequired(obj ResourceStatus) error {
 	for _, el := range obj.Conditions {
-		if err := AssertResourceStatusConditionsInnerRequired(el); err != nil {
+		if err := AssertResourceConditionRequired(el); err != nil {
 			return err
 		}
 	}
@@ -43,7 +40,7 @@ func AssertResourceStatusRequired(obj ResourceStatus) error {
 // AssertResourceStatusConstraints checks if the values respects the defined constraints
 func AssertResourceStatusConstraints(obj ResourceStatus) error {
 	for _, el := range obj.Conditions {
-		if err := AssertResourceStatusConditionsInnerConstraints(el); err != nil {
+		if err := AssertResourceConditionConstraints(el); err != nil {
 			return err
 		}
 	}
