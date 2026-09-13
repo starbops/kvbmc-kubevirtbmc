@@ -19,44 +19,44 @@ import (
 // addResponseHeaders option gives ImplResponse a Headers field directly --
 // see server.ResponseWithHeaders.)
 //
-// enrichmentFilter is the other half: applied once, to every route, it
-// buffers the handler's response, applies whatever patches were requested
-// via ctx, and copies both the (possibly patched) body and whatever
-// headers the handler set -- via ImplResponse.Headers or otherwise -- onto
-// the real response. A handler that calls neither PatchResponseBody nor
+// patchFilter is the other half: applied once, to every route, it buffers
+// the handler's response, applies whatever patches were requested via ctx,
+// and copies both the (possibly patched) body and whatever headers the
+// handler set -- via ImplResponse.Headers or otherwise -- onto the real
+// response. A handler that calls neither PatchResponseBody nor
 // ResponseWithHeaders costs it nothing beyond a small buffer-and-copy.
-type responseEnrichmentKey struct{}
+type patchContextKey struct{}
 
-type responseEnrichment struct {
+type patchState struct {
 	patches []func(body map[string]any)
 }
 
 // PatchResponseBody registers a function to mutate the response body,
 // decoded as a generic JSON object, before it's written to the client.
 // Multiple patches on the same request all run, in registration order. A
-// no-op if ctx didn't come from a request routed through enrichmentFilter
-// (e.g. a unit test using context.Background()); also silently skipped if
-// the body isn't a JSON object (an error response, for instance), since
+// no-op if ctx didn't come from a request routed through patchFilter (e.g.
+// a unit test using context.Background()); also silently skipped if the
+// body isn't a JSON object (an error response, for instance), since
 // there's nothing to patch.
 func PatchResponseBody(ctx context.Context, patch func(body map[string]any)) {
-	if e := enrichmentFrom(ctx); e != nil {
-		e.patches = append(e.patches, patch)
+	if s := patchesFrom(ctx); s != nil {
+		s.patches = append(s.patches, patch)
 	}
 }
 
-func enrichmentFrom(ctx context.Context) *responseEnrichment {
-	e, _ := ctx.Value(responseEnrichmentKey{}).(*responseEnrichment)
-	return e
+func patchesFrom(ctx context.Context) *patchState {
+	s, _ := ctx.Value(patchContextKey{}).(*patchState)
+	return s
 }
 
-// enrichmentFilter applies response enrichment requested via
+// patchFilter applies response body patches requested via
 // PatchResponseBody. See the package doc comment above for why this
 // exists.
-type enrichmentFilter struct {
+type patchFilter struct {
 	inner server.Router
 }
 
-func (f enrichmentFilter) Routes() server.Routes {
+func (f patchFilter) Routes() server.Routes {
 	routes := f.inner.Routes()
 	wrapped := make(server.Routes, len(routes))
 	for name, route := range routes {
@@ -65,7 +65,7 @@ func (f enrichmentFilter) Routes() server.Routes {
 	return wrapped
 }
 
-func (f enrichmentFilter) OrderedRoutes() []server.Route {
+func (f patchFilter) OrderedRoutes() []server.Route {
 	ordered := f.inner.OrderedRoutes()
 	wrapped := make([]server.Route, len(ordered))
 	for i, route := range ordered {
@@ -74,11 +74,11 @@ func (f enrichmentFilter) OrderedRoutes() []server.Route {
 	return wrapped
 }
 
-func (f enrichmentFilter) wrap(route server.Route) server.Route {
+func (f patchFilter) wrap(route server.Route) server.Route {
 	inner := route.HandlerFunc
 	route.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
-		enrichment := &responseEnrichment{}
-		r = r.WithContext(context.WithValue(r.Context(), responseEnrichmentKey{}, enrichment))
+		state := &patchState{}
+		r = r.WithContext(context.WithValue(r.Context(), patchContextKey{}, state))
 
 		rec := &responseBuffer{header: make(http.Header), status: http.StatusOK}
 		inner(rec, r)
@@ -88,8 +88,8 @@ func (f enrichmentFilter) wrap(route server.Route) server.Route {
 		}
 
 		body := rec.body.Bytes()
-		if len(enrichment.patches) > 0 {
-			if patched, ok := applyPatches(body, enrichment.patches); ok {
+		if len(state.patches) > 0 {
+			if patched, ok := applyPatches(body, state.patches); ok {
 				body = patched
 			}
 		}

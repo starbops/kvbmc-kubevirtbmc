@@ -116,7 +116,7 @@ func TestAuthFilter(t *testing.T) {
 
 // TestSessionCreate_EndToEnd drives the exact request from
 // kubevirtbmc#297's regression report through the real router
-// (routeFilter, enrichmentFilter, authFilter, and the real
+// (routeFilter, patchFilter, authFilter, and the real
 // APIService.RedfishV1SessionServiceSessionsPost), the same way the curl
 // reproduction did:
 //

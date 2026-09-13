@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func enrichmentHandler(status int, body string, fn func(ctx context.Context)) http.HandlerFunc {
+func patchHandler(status int, body string, fn func(ctx context.Context)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if fn != nil {
 			fn(r.Context())
@@ -18,10 +18,10 @@ func enrichmentHandler(status int, body string, fn func(ctx context.Context)) ht
 	}
 }
 
-func TestEnrichmentFilter_PatchResponseBody(t *testing.T) {
+func TestPatchFilter_PatchResponseBody(t *testing.T) {
 	inner := fakeRouter{
 		{Name: "RedfishV1SystemsComputerSystemIdGet", Method: "GET", Pattern: "/redfish/v1/Systems/{ComputerSystemId}",
-			HandlerFunc: enrichmentHandler(200, `{"Actions":{"#ComputerSystem.Reset":{"target":"x"}}}`, func(ctx context.Context) {
+			HandlerFunc: patchHandler(200, `{"Actions":{"#ComputerSystem.Reset":{"target":"x"}}}`, func(ctx context.Context) {
 				PatchResponseBody(ctx, func(body map[string]any) {
 					actions := body["Actions"].(map[string]any)
 					reset := actions["#ComputerSystem.Reset"].(map[string]any)
@@ -29,7 +29,7 @@ func TestEnrichmentFilter_PatchResponseBody(t *testing.T) {
 				})
 			})},
 	}
-	f := enrichmentFilter{inner: inner}
+	f := patchFilter{inner: inner}
 
 	rec := httptest.NewRecorder()
 	f.Routes()["RedfishV1SystemsComputerSystemIdGet"].HandlerFunc.ServeHTTP(rec, httptest.NewRequest("GET", "/redfish/v1/Systems/1", nil))
@@ -42,14 +42,14 @@ func TestEnrichmentFilter_PatchResponseBody(t *testing.T) {
 	}
 }
 
-func TestEnrichmentFilter_MultiplePatchesCompose(t *testing.T) {
+func TestPatchFilter_MultiplePatchesCompose(t *testing.T) {
 	inner := fakeRouter{
-		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: enrichmentHandler(200, `{}`, func(ctx context.Context) {
+		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: patchHandler(200, `{}`, func(ctx context.Context) {
 			PatchResponseBody(ctx, func(body map[string]any) { body["First"] = 1 })
 			PatchResponseBody(ctx, func(body map[string]any) { body["Second"] = 2 })
 		})},
 	}
-	f := enrichmentFilter{inner: inner}
+	f := patchFilter{inner: inner}
 
 	rec := httptest.NewRecorder()
 	f.Routes()["RedfishV1Get"].HandlerFunc.ServeHTTP(rec, httptest.NewRequest("GET", "/redfish/v1", nil))
@@ -60,12 +60,12 @@ func TestEnrichmentFilter_MultiplePatchesCompose(t *testing.T) {
 	}
 }
 
-func TestEnrichmentFilter_PassesThroughWhenNothingRequested(t *testing.T) {
+func TestPatchFilter_PassesThroughWhenNothingRequested(t *testing.T) {
 	body := `{"Id":"1","Nested":{"A":true}}`
 	inner := fakeRouter{
-		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: enrichmentHandler(201, body, nil)},
+		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: patchHandler(201, body, nil)},
 	}
-	f := enrichmentFilter{inner: inner}
+	f := patchFilter{inner: inner}
 
 	rec := httptest.NewRecorder()
 	f.Routes()["RedfishV1Get"].HandlerFunc.ServeHTTP(rec, httptest.NewRequest("GET", "/redfish/v1", nil))
@@ -81,13 +81,13 @@ func TestEnrichmentFilter_PassesThroughWhenNothingRequested(t *testing.T) {
 	}
 }
 
-func TestEnrichmentFilter_PatchOnNonJSONBodyPassesThroughUnchanged(t *testing.T) {
+func TestPatchFilter_PatchOnNonJSONBodyPassesThroughUnchanged(t *testing.T) {
 	inner := fakeRouter{
-		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: enrichmentHandler(500, "plain text error", func(ctx context.Context) {
+		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: patchHandler(500, "plain text error", func(ctx context.Context) {
 			PatchResponseBody(ctx, func(body map[string]any) { body["Ignored"] = true })
 		})},
 	}
-	f := enrichmentFilter{inner: inner}
+	f := patchFilter{inner: inner}
 
 	rec := httptest.NewRecorder()
 	f.Routes()["RedfishV1Get"].HandlerFunc.ServeHTTP(rec, httptest.NewRequest("GET", "/redfish/v1", nil))
@@ -97,13 +97,13 @@ func TestEnrichmentFilter_PatchOnNonJSONBodyPassesThroughUnchanged(t *testing.T)
 	}
 }
 
-func TestEnrichmentFilter_OrderedRoutesAlsoWraps(t *testing.T) {
+func TestPatchFilter_OrderedRoutesAlsoWraps(t *testing.T) {
 	inner := fakeRouter{
-		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: enrichmentHandler(200, `{}`, func(ctx context.Context) {
+		{Name: "RedfishV1Get", Method: "GET", Pattern: "/redfish/v1", HandlerFunc: patchHandler(200, `{}`, func(ctx context.Context) {
 			PatchResponseBody(ctx, func(body map[string]any) { body["Ordered"] = true })
 		})},
 	}
-	f := enrichmentFilter{inner: inner}
+	f := patchFilter{inner: inner}
 
 	ordered := f.OrderedRoutes()
 	if len(ordered) != 1 {
@@ -118,9 +118,9 @@ func TestEnrichmentFilter_OrderedRoutesAlsoWraps(t *testing.T) {
 	}
 }
 
-func TestPatchResponseBody_NoopWithoutEnrichmentContext(t *testing.T) {
+func TestPatchResponseBody_NoopWithoutPatchContext(t *testing.T) {
 	// A caller using a plain context (e.g. a unit test that doesn't go
-	// through enrichmentFilter) must not panic -- it just has nothing to
+	// through patchFilter) must not panic -- it just has nothing to
 	// collect into.
 	PatchResponseBody(context.Background(), func(map[string]any) {})
 }
